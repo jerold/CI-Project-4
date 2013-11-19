@@ -13,6 +13,7 @@ var (
 	)
 
 func main() {
+	//create random data vectors
 	data := make([][]float64, numVecs)
 	for i := range(data) {
 		data[i] = make([]float64, numAttrs)
@@ -20,6 +21,7 @@ func main() {
 			data[i][j] = rand.Float64()+float64(j+1)
 		}
 	}
+	//call kmeans with 2-5 clusters and prints some results
 	for i := 2; i <= 5; i++ {
 		clusters, centers := kmeans(i, data)
 		fmt.Println(i, "clusters")
@@ -37,6 +39,7 @@ func main() {
 	}
 }
 
+//euclidean distance between two vectors. they must be the same length or this panics
 func calcDistance(v []float64, c []float64) (dist float64) {
 	dist = 0.0
 	for i := range(v){
@@ -46,6 +49,7 @@ func calcDistance(v []float64, c []float64) (dist float64) {
 	return
 }
 
+//subtract two vectors taking the absolute value so it is positive
 func vectorDiff(v []float64, c []float64) (diff float64){
 	diff = 0.0
 	for i := range v {
@@ -54,6 +58,8 @@ func vectorDiff(v []float64, c []float64) (diff float64){
 	return 
 }
 
+//calculate kmeans. k is a parameter as well as the data set to be clustered
+//returns the centers and an array with the data vectors in each cluster
 func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers [][]float64) {
 	r := rand.New(rand.NewSource(10000))
 	centers = make([][]float64, numClusters)
@@ -63,7 +69,6 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 		copy(centers[i], matrix[r.Int31n(int32(len(centers)))])
 	}
 	var change float64 = 1.0
-	count := 0
 	//main loop. keep interating until there is almost no change in centers.
 	for change > 0.0001 {
 		//init some arrays to track rolling sums in clusters and members in each cluster
@@ -109,14 +114,14 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 					change += math.Abs(centers[i][j] - newValue)
 					centers[i][j] = newValue
 				}
+				//if nothing is in this cluster, grab a new vector randomly
+				//this is really not required unless random vectors are created
 			} else {
 				index := r.Int31n(int32(len(centers)))
 				change += vectorDiff(centers[i], matrix[index])
 				copy(centers[i], matrix[index])	
 			}
 		}
-		count++
 	}
-	fmt.Println("Iterations:", count)
-	return
+	return //all done
 }
