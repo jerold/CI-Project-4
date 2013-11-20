@@ -66,6 +66,36 @@ iris = {'inFiles':['data/iris/iris.data'],
          'width':4,
          'height':1}
 
+optdigits = {'inFiles':['data/optdigits/optdigits.tra',
+                        'data/optdigits/optdigits.tes'],
+             'outFile':'data/optdigits/optdigits.json',
+             'width':8,
+             'height':8}
+
+optdigitsOrig = {'inFiles':['data/optdigits/optdigits-orig.tra',
+                        'data/optdigits/optdigits-orig.windep',
+                        'data/optdigits/optdigits-orig.wdep'],
+             'outFile':'data/optdigits/optdigits-orig.json',
+             'width':32,
+             'height':32}
+
+letterRecognition = {'inFiles':['data/letter/letter-recognition.data'],
+             'outFile':'data/letter/letter-recognition.json',
+             'width':16,
+             'height':1}
+
+pendigits = {'inFiles':['data/pendigits/pendigits.tra',
+                        'data/pendigits/pendigits.tes'],
+             'outFile':'data/pendigits/pendigits.json',
+             'width':16,
+             'height':1}
+
+semeion = {'inFiles':['data/semeion/semeion.data'],
+             'outFile':'data/semeion/semeionTT.json',
+             'width':16,
+             'height':16}
+
+
 def parseAdult(lines):
     patSet = []
     attributes = [[] for _ in range(14)]
@@ -384,10 +414,109 @@ def parseIris(lines):
         print(len(set(attribute)))
     return patSet
 
+
+def parseOptdigits(lines, w, h):
+    patSet = []
+    for line in lines:
+        line = line.split('\n')[0]
+        line = line.split(',')
+        pattern = list(mygrouper(w, line[:len(line)]))
+        patternTarget = pattern[h][0]
+        patternTarget = int(patternTarget)
+        pattern = pattern[:h]
+        for i in range(len(pattern)):
+            for j in range(len(pattern[i])):
+                pattern[i][j] = int(pattern[i][j])
+        patSet.append({'p':pattern, 't':patternTarget})
+    return patSet
+
+def parseOptdigitsOrig(lines, w, h):
+    patSet = []
+    pattern = []
+    patternTarget = 0
+    hi = 0
+    for line in lines:
+        line = list(line)
+        # Cuts off newline \n
+        line = line[:len(line)-1]
+        if len(line) == w:
+            # Pattern Line
+            for i in range(len(line)):
+                line[i] = int(line[i])
+            pattern.append(line)
+            hi = hi + 1
+        elif hi == h:
+            # End of Pattern and Target Line
+            patternTarget = int(''.join(line))
+            #patternTarget = ''.join(line)
+            patSet.append({'p':pattern, 't':patternTarget})
+            # print('Target:' + str(''.join(line)))
+            # var = input("Cont?" + str(hi))
+            pattern = []
+            hi = 0
+        else:
+            # Bad line
+            #print('Bad Line: [' + str(''.join(line)) + ']')
+            pattern = []
+            hi = 0
+    return patSet
+
+def parseLetterRecognition(lines):
+    patSet = []
+    for line in lines:
+        line = line.split('\n')[0]
+        line = line.split(',')
+        pattern = line[1:]
+        for i in range(len(pattern)):
+            pattern[i] = int(pattern[i])
+        patternTarget = line[0]
+        patSet.append({'p':pattern, 't':patternTarget})
+    return patSet
+
+def parsePendigits(lines):
+    patSet = []
+    for line in lines:
+        line = line.split('\n')[0]
+        line = line.split(',')
+        pattern = line[:len(line)-1]
+        for i in range(len(pattern)):
+            pattern[i] = int(pattern[i])
+        patternTarget = int(line[len(line)-1])
+        patSet.append({'p':pattern, 't':patternTarget})
+    return patSet
+
+def parseSemeion(lines, w, h):
+    patSet = []
+    for line in lines:
+        line = line.split('\n')[0]
+        line = line.split(' ')
+        pattern = list(mygrouper(w, line[:len(line)-1]))
+        patternTarget = pattern[h]
+        pattern = pattern[:h]
+        if len(patternTarget) == 10:
+            for i in range(len(pattern)):
+                for j in range(len(pattern[i])):
+                    pattern[i][j] = int(pattern[i][j].split('.')[0])
+            for i in range(len(patternTarget)):
+                patternTarget[i] = int(patternTarget[i])
+            #print(patternTarget)
+            patternTarget = list(itertools.compress([0,1,2,3,4,5,6,7,8,9], patternTarget))[0]
+            #print(line)
+            #for i in range(len(pattern)):
+            #    print(''.join(str(x) for x in pattern[i]))
+            #print(patternTarget)
+            #var = input("cont")
+            patSet.append({'p':pattern, 't':patternTarget})
+        else:
+            var = input("Bad line [" + line + "]")
+    random.shuffle(patSet)
+    return patSet
+
+
 def mygrouper(n, iterable):
     "http://stackoverflow.com/questions/1624883/alternative-way-to-split-a-list-into-groups-of-n"
     args = [iter(iterable)] * n
-    return ([e for e in t if e != None] for t in itertools.izip_longest(*args))
+    return ([e for e in t if e != None] for t in itertools.zip_longest(*args))
 
 def buildKMeansCenters(patterns, w, h, k):
     centers = {}
@@ -536,7 +665,6 @@ def buildSigmaPattern(meanPat, patterns):
                 sPat[j] = sPat[j] + (pat['p'][j] - meanPat[j])*(pat['p'][j] - meanPat[j])
             sPat[j] = math.sqrt(1.0/len(patterns)*sPat[j])
     return sPat
-        
 
 
 def emptyPattern(w, h):
@@ -561,7 +689,7 @@ def printPattern(pattern):
 
 
 if __name__=="__main__":
-    parseSets = [pageBlock, car, flare, adult, wine, yeast, zoo, heart, seeds, ionosphere, iris, glass]
+    parseSets = [pageBlock, car, flare, adult, wine, yeast, zoo, heart, seeds, ionosphere, iris, glass, optdigits, optdigitsOrig, letterRecognition, pendigits, semeion]
     #parseSet = pageBlock
     #parseSets = [car]
     #parseSets = [flare]
@@ -574,6 +702,11 @@ if __name__=="__main__":
     #parseSets = [glass]
     #parseSets = [ionosphere]
     #parseSets = [iris]
+    #parseSets = [optdigits]
+    #parseSets = [optdigitsOrig]
+    #parseSets = [letterRecognition]
+    #parseSets = [pendigits]
+    #parseSets = [semeion]
 
     for parseSet in parseSets:
         lines = []
@@ -608,6 +741,16 @@ if __name__=="__main__":
             patternSet = parseIonosphere(lines)
         elif parseSet['outFile'] == iris['outFile']:
             patternSet = parseIris(lines)
+        elif parseSet['outFile'] == optdigits['outFile']:
+            patternSet = parseOptdigits(lines, parseSet['width'], parseSet['height'])
+        elif parseSet['outFile'] == optdigitsOrig['outFile']:
+            patternSet = parseOptdigitsOrig(lines, parseSet['width'], parseSet['height'])
+        elif parseSet['outFile'] == letterRecognition['outFile']:
+            patternSet = parseLetterRecognition(lines)
+        elif parseSet['outFile'] == pendigits['outFile']:
+            patternSet = parsePendigits(lines)
+        elif parseSet['outFile'] == semeion['outFile']:
+            patternSet = parseSemeion(lines, parseSet['width'], parseSet['height'])
             
         # print("pats: " + str(len(patternSet)))
         with open(parseSet['outFile'], 'w+') as outfile:
@@ -615,6 +758,7 @@ if __name__=="__main__":
             #        'width':parseSet['width'],
             #        'height':parseSet['height'],
             #        'patterns':patternSet}
+            print("Patterns: " + str(len(patternSet)))
             data = patternSet
             json.dump(data, outfile)
         print("\n")
