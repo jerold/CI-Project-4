@@ -66,7 +66,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 	centers = make([][]float64, numClusters)
 	//make initial random guess at centers
 	for i := range centers {
-		centers[i] = make([]float64, numAttrs)
+		centers[i] = make([]float64, len(matrix[0]))
 		copy(centers[i], matrix[r.Int31n(int32(len(centers)))])
 	}
 	var change float64 = 1.0
@@ -82,10 +82,10 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 		}
 		//make a new arrays for this iteration to sum each attribute in each cluster to find the mean
 		for i := range sums {
-			sums[i] = make([]float64, numAttrs)
+			sums[i] = make([]float64, len(matrix[0]))
 		}
 		//main clustering logic--loop through each input vector
-		for i := 0; i < numVecs; i++ {
+		for i := 0; i < len(matrix); i++ {
 			bestFit := -1
 			minDist := 10000.0
 			//loop through each center and see which center is closer to the current input vector

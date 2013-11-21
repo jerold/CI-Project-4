@@ -1,56 +1,58 @@
 package main
 
 import (
-	//"encoding/json"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
-	"os"
+	//"os"
 )
 
 type Pattern struct {
-	target     float64
-	attributes float64
+	T int
+	P []float64
 }
 
 type PatternSet struct {
-	patterns []Pattern
+	Patterns []Pattern
 }
 
-func readJson(filename string) (p PatternSet) {
-	fileInfo, err := os.Stat(filename)
+func readJson(filename string) (jsonData []Pattern) {
+	file, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-	file, err := os.Open(filename)
+	//fmt.Println(file)
+	err = json.Unmarshal(file, &jsonData)
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println(file)
-	fmt.Println(fileInfo.Size())
-	size := fileInfo.Size()
-	data := make([]byte, int(size))
-	_, err = file.Read(data)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(data)
-	//dec := json.NewDecoder(strings.NewReader(jsonStream))
-	//for {
-	//	var m Message
-	//	if err := dec.Decode(&m); err == io.EOF {
-	//		break
-	//	} else if err != nil {
-	//		log.Fatal(err)
-	//	}
-	//	fmt.Printf("%s: %s\n", m.Name, m.Text)
-	//}
-	temp := Pattern{10.0, 5.0}
-	p = PatternSet{make([]Pattern, 5)}
-	p.patterns[0] = temp
 	return
 }
 
 func main() {
 	filename := "../data/iris/iris.json"
-	readJson(filename)
+	data := readJson(filename)
+	//fmt.Println(data)
+	targets := make([]int, len(data))
+	patterns := make([][]float64, len(data))
+	for i, item := range data {
+		targets[i] = item.T
+		patterns[i] = item.P
+	}
+	trainIndex := int(float64(len(patterns)) * 0.8)
+	fmt.Println(trainIndex)
+	clusters, centers := kmeans(3, patterns[:trainIndex])
+	fmt.Println("CENTERS:")
+	for j := range centers {
+		fmt.Println(centers[j])
+	}
+	for k := 0; k < len(clusters); k++ {
+		fmt.Println("CLUSTER:", k)
+		fmt.Printf("There are %d elements in this cluster \n", clusters[k].Len())
+		for e := clusters[k].Front(); e != nil; e = e.Next() {
+			fmt.Println(e)
+		}
+	}
+	fmt.Println("Done")
 }
