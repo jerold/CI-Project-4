@@ -1,8 +1,8 @@
 package main
 
 import (
-	"container/list"
-	"fmt"
+	//"container/list"
+	//"fmt"
 	"math"
 	"math/rand"
 )
@@ -23,21 +23,21 @@ func main1() {
 		}
 	}
 	//call kmeans with 2-5 clusters and prints some results
-	for i := 2; i <= 5; i++ {
-		clusters, centers := kmeans(i, data)
-		fmt.Println(i, "clusters")
-		fmt.Println("CENTERS:")
-		for j := range centers {
-			fmt.Println(centers[j])
-		}
-		for k := 0; k < len(clusters); k++ {
-			fmt.Println("CLUSTER:", k)
-			fmt.Printf("There are %d elements in this cluster \n", clusters[k].Len())
-			for e := clusters[k].Front(); e != nil; e = e.Next() {
-				fmt.Println(e)
-			}
-		}
-	}
+	/*for i := 2; i <= 5; i++ {
+	clusters, centers := kmeans(i, data)
+	fmt.Println(i, "clusters")
+	fmt.Println("CENTERS:")
+	for j := range centers {
+		//fmt.P*/ //rintln(centers[j])
+	//}
+	//for k := 0; k < len(clusters); k++ {
+	//	fmt.Println("CLUSTER:", k)
+	//	fmt.Printf("There are %d elements in this cluster \n", clusters[k].Len())
+	//	for e := clusters[k].Front(); e != nil; e = e.Next() {
+	//		fmt.Println(e)
+	//	}
+	//}
+	//}
 }
 
 //euclidean distance between two vectors. they must be the same length or this panics
@@ -61,7 +61,7 @@ func vectorDiff(v []float64, c []float64) (diff float64) {
 
 //calculate kmeans. k is a parameter as well as the data set to be clustered
 //returns the centers and an array with the data vectors in each cluster
-func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers [][]float64) {
+func kmeans(numClusters int, matrix [][]float64) (clusters [][][]float64, centers [][]float64) {
 	r := rand.New(rand.NewSource(10000))
 	centers = make([][]float64, numClusters)
 	//make initial random guess at centers
@@ -76,9 +76,9 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 		change = 0.0
 		counts := make([]int, numClusters)
 		sums := make([][]float64, numClusters)
-		clusters = make([]list.List, numClusters)
+		clusters = make([][][]float64, numClusters)
 		for i := range clusters {
-			clusters[i].Init()
+			clusters[i] = make([][]float64, 0)
 		}
 		//make a new arrays for this iteration to sum each attribute in each cluster to find the mean
 		for i := range sums {
@@ -105,7 +105,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 				sums[bestFit][k] += matrix[i][k]
 			}
 			//append this vector to the appropriate cluster
-			clusters[bestFit].PushBack(matrix[i])
+			clusters[bestFit] = append(clusters[bestFit], matrix[i])
 		}
 		//update the new centers as the mean of values in each cluster
 		for i := range centers {

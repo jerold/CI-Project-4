@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"math"
 )
 
 type Pattern struct {
-	T int
+	T float64
 	P []float64
 }
 
@@ -29,27 +30,34 @@ func readJson(filename string) (jsonData []Pattern) {
 	return
 }
 
-func compareClusters(correct []list.List, clustered []list.List) []int {
+func vectorCompare(v1 []float64, v2 []float64) bool {
+	var same bool = true
+	for i := range v1 {
+		if math.Abs(v1[i]-v2[i]) > 0.0001 {
+			same = false
+			break
+		}
+	}
+	return same
+}
+
+func compareClusters(correct [][][]float64, clustered [][][]float64) []int {
+	var done bool = false
 	count := make([]int, len(correct))
-	for i, l := range correct {
-		for e := l.Front(); e != nil; e = e.Next() {
-			var vector1 []float64
-			switch vec := e.Value.(type) {
-			case []float64:
-				vector1 = vec
-			}
-			for j, p := range clustered {
-				for u := p.Front(); u != nil; u.Next() {
-					var vector2 []float64
-					switch vec := e.Value.(type) {
-					case []float64:
-						vector2 = vec
-					}
-					if vectorDiff(vector1, vector2) < 0.0001 {
-						if i == j {
+	for i := range correct {
+		for _, v1 := range correct[i] {
+			for k := range clustered {
+				for _, v2 := range clustered[k] {
+					if vectorCompare(v1, v2) {
+						if i == k {
 							count[i]++
+							done = true
+							break
 						}
 					}
+				}
+				if done {
+					break
 				}
 			}
 		}
@@ -57,60 +65,125 @@ func compareClusters(correct []list.List, clustered []list.List) []int {
 	return count
 }
 
-func getNumClasses(t []int) int {
+func getNumClasses(t []float64) int {
 	classes := list.New()
+	classes.Init()
+	count := 1
+	var found bool
 	for _, class := range t {
 		if classes.Len() == 0 {
 			classes.PushFront(class)
 		} else {
-			for e := classes.Front(); e != nil; e.Next() {
-				var num int
+			found = false
+			for e := classes.Front(); e != nil; e = e.Next() {
+				var num float64
 				switch n := e.Value.(type) {
-				case int:
+				case float64:
 					num = n
 				}
-				if num != class {
-					classes.PushBack(class)
+				if num == class {
+					found = true
+					break
+				}
+			}
+			if !found {
+				classes.PushBack(class)
+				count++
+			}
+		}
+	}
+	fmt.Println(count)
+	return count
+}
+
+func makeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
+	clusters = make([][][]float64, getNumClasses(t))
+	for i := range clusters {
+		clusters[i] = make([][]float64, 5)
+	}
+	for i, item := range p {
+		clusters[int(t[i])] = append(clusters[int(t[i])], item)
+	}
+	return clusters
+}
+
+func moveClusters(c [][][]float64) [][][]float64 {
+	counts := make([][]int, len(c))
+	for i := range counts {
+		counts[i] = make([]int, len(c))
+	}
+	//for iter := 0; iter < len(c); iter++ {
+	for i := range c {
+		for _, elem := range c[i] {
+			counts[i][int(elem[len(elem)-1])]++
+		}
+	}
+	fmt.Println(counts)
+	maxs := make([]int, len(c))
+	//class := 0
+	for i := range counts {
+		max := 0
+		class := -1
+		for j, count := range counts[i] {
+			if count > max {
+				max = count
+				class = j
+			}
+		}
+		if maxs[class] == 0 {
+			maxs[class] = max
+		} else if maxs[class] <= max {
+			for k, item := range maxs {
+				if item == 0 {
+					maxs[k] = maxs[class]
+					maxs[class] = max
 				}
 			}
 		}
 	}
-	return classes.Len()
-}
-
-func makeClusters(p [][]float64, t []int) (clusters []list.List) {
-	clusters = make([]list.List, getNumClasses(t))
-	for i, item := range p {
-		clusters[t[i]].PushBack(item)
+	fmt.Println(maxs)
+	for i, elem := maxs {
+		for j := range counts {
+			for k, item := range counts[j] {
+				if elem == item {
+					c[j],
+				}
+			}
+		}
 	}
-	return clusters
+	c[class], c[iter] = c[iter], c[class]
+	//	break
+	//}
+	//}
+	return c
 }
 
 func main() {
 	filename := "../data/iris/iris.json"
 	data := readJson(filename)
-	targets := make([]int, len(data))
+	targets := make([]float64, len(data))
 	patterns := make([][]float64, len(data))
 	for i, item := range data {
 		targets[i] = item.T
 		patterns[i] = item.P
+		patterns[i] = append(patterns[i], item.T)
 	}
-	//trainIndex := int(float64(len(patterns)) * 0.8)
 	//fmt.Println(trainIndex)
-	correctClusters := makeClusters(patterns, targets)
 	clusters, centers := kmeans(getNumClasses(targets), patterns)
-	count := compareClusters(correctClusters, clusters)
 	fmt.Println("CENTERS:")
 	for j := range centers {
 		fmt.Println(centers[j])
 	}
 	for k := 0; k < len(clusters); k++ {
 		fmt.Println("CLUSTER:", k)
-		fmt.Printf("There are %d elements in this cluster \n", clusters[k].Len())
-		for e := clusters[k].Front(); e != nil; e = e.Next() {
-			fmt.Println(e.Value)
-		}
+		fmt.Printf("There are %d elements in this cluster \n", len(clusters[k]))
+		fmt.Println(clusters[k])
 	}
+	correctClusters := makeClusters(patterns, targets)
+	//var swapped bool
+	clusters = moveClusters(clusters)
+	count := compareClusters(correctClusters, clusters)
 	fmt.Println(count)
+	//fmt.Println(correctClusters)
 	fmt.Println("Done")
 }
