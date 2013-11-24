@@ -218,6 +218,8 @@ class Actor(object):
 		self.neighbors = []
 		self.moveHistory = []
 		self.shortTermMemory = []
+		self.close = {'Ant':[], 'Packet':[], 'Pheromone':[]}
+		self.highestPacketDensitySeen = 0
 		Actor.quadTree.addActor(self)
 
 	def move(self, dX, dY):
@@ -268,9 +270,14 @@ class Actor(object):
 		"""Called in the Quad Tree when this Actor, or one in visual range of it moves out of range"""
 		if actor in self.neighbors:
 			self.neighbors.remove(actor)
+			self.neighborRemoved(actor)
 			# print("R " + str(self.id) + " : " + ",".join(str(n.id) for n in self.neighbors))
 
 	def neighborAdded(self, actor):
+		"""Hook for Subclasses"""
+		return 0
+
+	def neighborRemoved(self, actor):
 		"""Hook for Subclasses"""
 		return 0
 

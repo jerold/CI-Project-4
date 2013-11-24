@@ -35,7 +35,7 @@ def standardDeviation(collection):
 	return 999999
 
 
-### Colony Methods ####################################################################################
+### Environment Classes ###############################################################################
 #######################################################################################################
 
 class Packet(Actor):
@@ -57,41 +57,65 @@ class Pheromone(Actor):
 		super(self.__class__, self).__init__(position)
 		Pheromone.pheromones.append(self)
 		self.concentration = 0.0
+		self.cHistory = []
 
 	def update(self):
 		"""Pheromone levels decay over time"""
+		self.cHistory.append(self.concentration)
 		self.concentration = .98*self.concentration
 
+
+### Ant Class #########################################################################################
+#######################################################################################################
 
 class Ant(Actor):
 	"""Ants wander around the solution space searching for packets which they attempt to Clustering
 	based on how the packet smells.  Similar packets go next to one another"""
 	ants = []
+	k1 = .5
+	k2 = 1 - k1
 
 	def __init__(self, position):
 		super(self.__class__, self).__init__(position)
 		Ant.ants.append(self)
 		self.setRangeOfVision(10)
+
 		self.carrying = False
 		self.packetInHand = []
+		self.mostSimilarPacketSeen = []
+
+		self.heading = 0.0
 
 	def update(self):
 		"""Have the ant wander, lay down pheromones, and possibly move a packet around"""
-		ang = np.radians(random.randrange(0, 360))
+		self.depositPheromones()
 		mag = random.randrange(0, 5)
-		self.move(np.cos(ang)*mag, np.sin(ang)*mag)
-		for pheromone in self.neighborsOfType(Pheromone):
-			pheromone.concentration = pheromone.concentration + 10
 		if self.carrying:
-			# Maybe the and will drop whats in its hands
-			return 0
+			# Maybe the ant will drop whats in its hands
+			dropProbability = 0
+			self.heading = self.angleToActor(mostSimilarPacketSeen)
 		else:
 			# Maybe the ant will pick something up
-			return 0
+			pickupProbability = 0
+			self.heading = self.angleFromPheromones()
+		self.move(np.cos(self.heading)*mag, np.sin(self.heading)*mag)
+
+	def processEnvironment(self):
+		"""Minimize looping through neighbors by doing all o(n) time work here"""
+
+
+	def depositPheromones(self):
+		for p in self.close['Pheromone']:
+			p.concentration = p.concentration + 10/len(self.close['Pheromone'])
+
+	def randomAngle(self):
+		return np.radians(random.randrange(0, 360))
 
 	def angleToActor(self, actor):
 		"""Using its short term memory the ant can go searching for a packet it saw similar to the
 		packet it is currently carrying"""
+		if actor.position.x == self.position.x:
+			return 0
 		ang = np.arctan((actor.position.y - self.position.y)/(actor.position.x - self.position.x))
 		if ang < 0:
 			ang = ang + 2*np.pi
@@ -99,28 +123,84 @@ class Ant(Actor):
 			ang = ang + np.pi
 		return ang%(2*np.pi)
 
+	# def angleFromPheromones(self):
+	# 	pheromones = self.neighborsOfType(Pheromone)
+	# 	if len(pheromones) > 0:
+	# 		pheromones.sort(key=lambda x: x.concentration, reverse=True)
+	# 		# print(", ".join(str(round(p.concentration, 3)) for p in pheromones))
+	# 		if pheromones[0].concentration > 200:
+	# 			return self.angleToActor(pheromones[-1])
+	# 		else:
+	# 			return self.randomAngle()
+	# 	else:
+	# 		return self.randomAngle()
+
+	def angleFromPheromones(self):
+		"""Dropping pheromones prevents ants from backtracking too much as they avoid high
+		concentrations of the stuff.  It therefore keeps ants from spending too much time
+		ontop of each other"""
+		if len(self.close['Pheromone']) > 0:
+			minIndex = 0
+			maxIndex = 0
+			for i, p in enumerate(self.close['Pheromone']):
+				if p.concentration < self.close['Pheromone'][minIndex].concentration:
+					minIndex = i
+				if p.concentration > self.close['Pheromone'][maxIndex].concentration:
+					maxIndex = i
+			# print(str(round(self.close['Pheromone'][maxIndex].concentration, 0)) + " " + str(round(self.close['Pheromone'][minIndex].concentration, 0)))
+			if self.close['Pheromone'][maxIndex].concentration > 30:
+				return self.angleToActor(self.close['Pheromone'][maxIndex])*.1 + self.angleToActor(self.close['Pheromone'][minIndex])*.9
+				# return self.angleToActor(pheromones[minIndex])
+			else:
+				return self.randomAngle()
+		else:
+			return self.randomAngle()
+
+	# def angleFromPheromones(self):
+	# 	pheromones = self.neighborsOfType(Pheromone)
+	# 	if len(pheromones) > 0:
+	# 		cSum = 0.0
+	# 		for p in pheromones:
+	# 			cSum = cSum + p.concentration
+	# 		weightedAngle = 0.0
+	# 		for p in pheromones:
+	# 			weightedAngle = weightedAngle + self.angleToActor(p)*(p.concentration/cSum)
+	# 		weightedAngle = (weightedAngle + np.pi)%(2*np.pi)
+	# 		# print(weightedAngle)
+	# 		return weightedAngle
+	# 	else:
+	# 		return self.randomAngle()
+
 	def pPickUp(self):
 		"""LF Model of Standard Ant Clustering"""
 		return 0
 
-	def neighborsOfType(self, neighborType):
-		"""not all neighbors are the same, sometimes we want to work with neighbors of one type only"""
-		nots = []
-		for n in self.neighbors:
-			if type(n) == neighborType:
-				nots.append(n)
-		return nots
+	def updateClosest(self, actor, doAdd):
+		if doAdd:
+			self.close[str(type(actor).__name__)].append(actor)
+			if type(actor) == Packet:
+				self.highestPacketDensitySeen = max(self.highestPacketDensitySeen, len(self.close['Packet']))
+				self.shortTermMemory.append(actor)
+				if len(self.shortTermMemory) > 30:
+					self.shortTermMemory.pop(0)
+		else:
+			self.close[str(type(actor).__name__)].remove(actor)
 
-	def neighborAdded(self, actor):
-		"""A hook from the Actor super class allows us to create a memory of things we've seen"""
-		if type(actor) == Packet and actor not in self.shortTermMemory:
-			self.shortTermMemory.append(actor)
-			if len(self.shortTermMemory) > 30:
-				self.shortTermMemory.pop(0)
-
-	def moved(self, oldPosition):
+	def updateMoveHistory(self, oldPosition):
 		oldPosition.z = self.carrying
 		self.moveHistory.append(oldPosition)
+
+	def neighborAdded(self, actor):
+		"""SuperClass Hooke"""
+		self.updateClosest(actor, True)
+
+	def neighborRemoved(self, actor):
+		"""SuperClass Hooke"""
+		self.updateClosest(actor, False)
+
+	def moved(self, oldPosition):
+		"""SuperClass Hooke"""
+		self.updateMoveHistory(oldPosition)
 
 
 class Colony:
@@ -138,16 +218,17 @@ if __name__=="__main__":
 	# 	a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
 	# 	# print(str(packets[i].id) + " : " + str(packets[i].getX()) + ", " + str(packets[i].getY()))
 
-	# for i in range(200):
-	# 	p = Packet("p1", Point(random.randrange(0, 100), random.randrange(0, 100)))
-	for x in range(100/7+1):
-		for y in range(100/7+1):
-			p = Pheromone(Point(x*7, y*7))
-	for i in range(1):
+	for i in range(200):
+		p = Packet("p1", Point(random.randrange(0, 100), random.randrange(0, 100)))
+	interPheromoneDist = 7
+	for x in range(120/interPheromoneDist):
+		for y in range(120/interPheromoneDist):
+			p = Pheromone(Point(x*interPheromoneDist-10, y*interPheromoneDist-10))
+	for i in range(10):
 		a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
 
 	print("Packets:" + str(len(Packet.packets)))
-	# print("Pheromone:" + str(len(Pheromone.pheromones)))
+	print("Pheromone:" + str(len(Pheromone.pheromones)))
 	print("Ants:" + str(len(Ant.ants)))
 
 	# Ant.ants[0].move(20, 20)
@@ -155,10 +236,9 @@ if __name__=="__main__":
 	# 	print(str(n) + " " + str(Ant.ants[0].dist(n)))
 	# print("")
 
-	for i in range(10000):
+	for i in range(1000):
 		if i%100 == 0:
-			print("Move: " + str(i))
-
+			print("Move: " + str(i) + ", D[" + str(Ant.ants[0].highestPacketDensitySeen) + "], P[" + str(len(Ant.ants[0].close['Packet'])) + "]")
 		for p in Pheromone.pheromones:
 			p.update()
 		for a in Ant.ants:
@@ -178,6 +258,12 @@ if __name__=="__main__":
 		x = x + [h.x for h in a.moveHistory]
 		y = y + [h.y for h in a.moveHistory]
 		area = area + [h.z*10+1 for h in a.moveHistory]
+
+	with open('antAnimator/antMotion.csv', 'w') as file:
+		for a in Ant.ants:
+			file.write(",".join(str(h.x)+","+str(h.y)+","+str(h.z*10+4) for h in a.moveHistory)+"\n")
+		for p in Pheromone.pheromones:
+			file.write(",".join(str(p.position.x)+","+str(p.position.y)+","+str(c/3) for c in p.cHistory)+"\n")
 
 	# x = [p.position.x for p in Packet.packets] + [a.position.x for a in Ant.ants]
 	# y = [p.position.y for p in Packet.packets] + [a.position.y for a in Ant.ants]
