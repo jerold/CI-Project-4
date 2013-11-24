@@ -2,9 +2,11 @@ from math import sqrt
 
 
 class Point:
+	"""Simple Point Class facilitates distance comparisons and movement"""
 	def __init__(self, inX, inY):
 		self.x = inX
 		self.y = inY
+		self.z = 0
 
 	def move(self, dX, dY):
 		self.x = self.x + dX
@@ -16,7 +18,15 @@ class Point:
 		return sqrt(dx**2 + dy**2)
 
 
+
+	def __str__(self):
+		return "x:" + str(self.x) + " y:" + str(self.y)
+
+
 class QuadTree(object):
+	"""The Quad Tree effectively manages proximity calculations, reducing the number of distance comparisons
+	performed when actors move throughout a 2D space. Quads divide themselves once they reach a given actor
+	saturation, limiting the number of actors that any one quad is responsible for at a given time."""
 	maxDepth = 6;
 	minActorsPerQuadTree = 3;
 	maxActorsPerQuadTree = 6;
@@ -73,7 +83,7 @@ class QuadTree(object):
 			self.addActorToActors(actor)
 
 	def addActorToActors(self, actor):
-		"""actor will be put here in this quad"""
+		"""Actor will be maintained here in this quad for now"""
 		if actor not in self.actors:
 			self.actors.append(actor)
 			self.updateActorNeighbors(actor)
@@ -92,11 +102,15 @@ class QuadTree(object):
 			self.removeActorFromActors(actor)
 
 	def removeActorFromActors(self, actor):
+		"""Actor will be removed if it exists in actors"""
 		if actor in self.actors:
 			self.actors.remove(actor)
 			self.updateActorNeighbors(actor)
 
 	def actorMoved(self, actor, fromPosition):
+		"""Each time an actor moves we pull it out of the quadtree and replace it to maintained
+		Quad Tree simplicity.  The Actor's previous location is used for removal because the Quad's
+		state, and neighbor information depends on that information."""
 		self.removeActorAtPosition(actor, fromPosition)
 		self.addActor(actor)
 
@@ -127,6 +141,7 @@ class QuadTree(object):
 					actor.removeNeighbor(potentialNeighbor)
 
 	def haveChildren(self):
+		"""At a given saturation the Quad destributes it's Actors to 4 new children"""
 		childMin = Point(0.0, 0.0)
 		childMax = Point(0.0, 0.0)
 		self.clearChildren()
@@ -151,18 +166,23 @@ class QuadTree(object):
 		self.hasChildren = True
 
 	def collectActors(self):
-		for x in range(2):
-			for y in range(2):
-				self.children[x][y].collectActors()
-				for childActor in self.children[x][y].actors:
-					self.addActorToActors(childActor)
+		"""Typically performed when there are not enough Children maintained by the Quad's children
+		to justify have children, we collect child actors and later delete the children"""
+		if self.hasChildren:
+			for x in range(2):
+				for y in range(2):
+					self.children[x][y].collectActors()
+					for childActor in self.children[x][y].actors:
+						self.addActorToActors(childActor)
 
 	def killChildren(self):
+		"""Every parent dreams of outliving their children. Today is not that day"""
 		self.collectActors()
 		self.clearChildren()
 		self.hasChildren = False
 
 	def clearChildren(self):
+		"""Cleanup method to make sure no ghosts remain to haunt us"""
 		self.children = [[], []]
 
 	def __str__(self):
@@ -182,7 +202,12 @@ class QuadTree(object):
 
 
 class Actor(object):
-	quadTree = QuadTree(Point(0.0, 0.0), Point(100.0, 100.0), 0)
+	"""When moved an Actor informs the Quadtree watching over all Actors so that proximity service
+	can be kept current.  Each Actor can have it's own range of vision, and will see only otherwise
+	actors that exist within that range.  Such Actors appear in the Neighbors list"""
+	xMax = 100
+	yMax = 100
+	quadTree = QuadTree(Point(0.0, 0.0), Point(xMax, yMax), 0)
 	actorIdInc = 0
 
 	def __init__(self, position):
@@ -191,15 +216,30 @@ class Actor(object):
 		self.position = position
 		self.rangeOfVision = 0
 		self.neighbors = []
+		self.moveHistory = []
+		self.shortTermMemory = []
 		Actor.quadTree.addActor(self)
 
 	def move(self, dX, dY):
+		"""Old position is used to help the Quad Tree chech it's pre-movement state for differences"""
 		oldPosition = Point(self.position.x, self.position.y)
 		self.position.move(dX, dY)
+
+		if self.position.x > Actor.xMax:
+			self.position.x = self.position.x - Actor.xMax
+		elif self.position.x < 0:
+			self.position.x = self.position.x + Actor.xMax
+		if self.position.y > Actor.yMax:
+			self.position.y = self.position.y - Actor.yMax
+		elif self.position.y < 0:
+			self.position.y = self.position.y + Actor.yMax
+
 		Actor.quadTree.actorMoved(self, oldPosition)
+		self.moved(oldPosition)
 		# print(str(Actor.quadTree))
 
 	def setRangeOfVision(self, inRange):
+		"""Sometimes a range of vision must be changed after initialization, this is how it's done"""
 		if inRange > self.rangeOfVision:
 			self.rangeOfVision = inRange
 			Actor.quadTree.actorMoved(self, self.position)
@@ -218,11 +258,22 @@ class Actor(object):
 		return self.position.dist(a2.position)
 
 	def addNeightbor(self, actor):
+		"""Called in the Quad Tree when this Actor, or one in visual range of it moves in to range"""
 		if actor not in self.neighbors:
 			self.neighbors.append(actor)
+			self.neighborAdded(actor)
 			# print("A " + str(self.id) + " : " + ",".join(str(n.id) for n in self.neighbors))
 
 	def removeNeighbor(self, actor):
+		"""Called in the Quad Tree when this Actor, or one in visual range of it moves out of range"""
 		if actor in self.neighbors:
 			self.neighbors.remove(actor)
 			# print("R " + str(self.id) + " : " + ",".join(str(n.id) for n in self.neighbors))
+
+	def neighborAdded(self, actor):
+		"""Hook for Subclasses"""
+		return 0
+
+	def moved(self, oldPosition):
+		"""Hook for Subclasses"""
+		return 0
