@@ -46,16 +46,17 @@ func (net *Network) printNet() {
 }
 
 func (net *Network) compete(vector []float64) (winner int) {
-	for i, n := range net.Net[0].Layer {
-		n.Output = vector[i]
-	}
+	//for i, n := range net.Net[0].Layer {
+	//	n.Output = vector[i]
+	//}
+	var max float64 = -1.0
+	winner = 0
 	for i, n := range net.Net[1].Layer {
 		var sum float64 = 0.0
-		var max float64 = -1.0
-		winner = 0
-		for j := range n.Weights {
-			sum += n.Weights[j] * vector[i]
-		}
+		//for j := range n.Weights {
+		//	sum += n.Weights[j] * vector[i]
+		//}
+		sum = calcDistance(n.Weights, vector)
 		if sum > max {
 			max = sum
 			winner = i

@@ -163,7 +163,7 @@ func moveClusters(c [][][]float64) [][][]float64 {
 }
 
 func main() {
-	filename := "../data/heart/heart.json"
+	filename := "../data/iris/iris.json"
 	data := readJson(filename)
 	targets := make([]float64, len(data))
 	patterns := make([][]float64, len(data))
@@ -195,6 +195,7 @@ func main() {
 	for i := 0; i < getNumClasses(targets); i++ {
 		net.Net[1].Layer[i].Weights = make([]float64, len(patterns[0]))
 		net.Net[1].Layer[i].initWeights(patterns)
+		fmt.Println(net.Net[1].Layer[i].Weights)
 	}
 
 	//net.initWeights(len(patterns[0]) - 1)
@@ -208,7 +209,8 @@ func main() {
 		lClusters[result] = append(lClusters[result], p)
 	}
 	for i := range lClusters {
-		fmt.Println("cluster", i)
+		fmt.Println("CLUSTER", i)
+		fmt.Printf("There are %d elements in this cluster \n", len(lClusters[i]))
 		fmt.Println(lClusters[i])
 	}
 	fmt.Println("Done")
