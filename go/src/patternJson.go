@@ -41,6 +41,10 @@ func vectorCompare(v1 []float64, v2 []float64) bool {
 	return same
 }
 
+func findMean(data [][]float64) (mean []float64) {
+	return
+}
+
 func compareClusters(correct [][][]float64, clustered [][][]float64) []int {
 	var done bool = false
 	count := make([]int, len(correct))
@@ -92,7 +96,7 @@ func getNumClasses(t []float64) int {
 			}
 		}
 	}
-	fmt.Println(count)
+	//fmt.Println(count)
 	return count
 }
 
@@ -118,7 +122,7 @@ func moveClusters(c [][][]float64) [][][]float64 {
 			counts[i][int(elem[len(elem)-1])]++
 		}
 	}
-	fmt.Println(counts)
+	//fmt.Println(counts)
 	maxs := make([]int, len(c))
 	//class := 0
 	for i := range counts {
@@ -141,17 +145,17 @@ func moveClusters(c [][][]float64) [][][]float64 {
 			}
 		}
 	}
-	fmt.Println(maxs)
-	for i, elem := maxs {
-		for j := range counts {
-			for k, item := range counts[j] {
-				if elem == item {
-					c[j],
-				}
-			}
-		}
-	}
-	c[class], c[iter] = c[iter], c[class]
+	//fmt.Println(maxs)
+	//for i, elem := maxs {
+	//	for j := range counts {
+	//		for k, item := range counts[j] {
+	//			if elem == item {
+	//				c[j],
+	//			}
+	//		}
+	//	}
+	//}
+	//c[class], c[iter] = c[iter], c[class]
 	//	break
 	//}
 	//}
@@ -159,14 +163,14 @@ func moveClusters(c [][][]float64) [][][]float64 {
 }
 
 func main() {
-	filename := "../data/iris/iris.json"
+	filename := "../data/heart/heart.json"
 	data := readJson(filename)
 	targets := make([]float64, len(data))
 	patterns := make([][]float64, len(data))
 	for i, item := range data {
 		targets[i] = item.T
 		patterns[i] = item.P
-		patterns[i] = append(patterns[i], item.T)
+		//patterns[i] = append(patterns[i], item.T)
 	}
 	//fmt.Println(trainIndex)
 	clusters, centers := kmeans(getNumClasses(targets), patterns)
@@ -179,11 +183,33 @@ func main() {
 		fmt.Printf("There are %d elements in this cluster \n", len(clusters[k]))
 		fmt.Println(clusters[k])
 	}
-	correctClusters := makeClusters(patterns, targets)
+	//correctClusters := makeClusters(patterns, targets)
 	//var swapped bool
-	clusters = moveClusters(clusters)
-	count := compareClusters(correctClusters, clusters)
-	fmt.Println(count)
-	//fmt.Println(correctClusters)
+	//clusters = moveClusters(clusters)
+	//count := compareClusters(correctClusters, clusters)
+	//fmt.Println(count)
+
+	//competitive learning call on same data
+	net := Network{}
+	net.initNet(len(patterns[0]), getNumClasses(targets))
+	for i := 0; i < getNumClasses(targets); i++ {
+		net.Net[1].Layer[i].Weights = make([]float64, len(patterns[0]))
+		net.Net[1].Layer[i].initWeights(patterns)
+	}
+
+	//net.initWeights(len(patterns[0]) - 1)
+	//net.printNet()
+	var lClusters [][][]float64 = make([][][]float64, getNumClasses(targets))
+	for i := range lClusters {
+		lClusters[i] = make([][]float64, 0)
+	}
+	for _, p := range patterns {
+		result := net.compete(p)
+		lClusters[result] = append(lClusters[result], p)
+	}
+	for i := range lClusters {
+		fmt.Println("cluster", i)
+		fmt.Println(lClusters[i])
+	}
 	fmt.Println("Done")
 }

@@ -1,30 +1,31 @@
 package main
 
 import (
-		"math/rand"
-		"fmt"
-		"math"
-		"container/list"
-		)
+	"container/list"
+	"fmt"
+	"math"
+	"math/rand"
+)
+
 //vars for the number of data vectors and number of attributes in each vector
 var (
-	 numVecs int = 100
-	 numAttrs int = 5
-	)
+	numVecs  int = 100
+	numAttrs int = 5
+)
 
 func main() {
 	//create random data vectors
 	data := make([][]float64, numVecs)
-	for i := range(data) {
+	for i := range data {
 		data[i] = make([]float64, numAttrs)
-		for j := range(data[i]) {
-			data[i][j] = rand.Float64()+float64(j+1)
+		for j := range data[i] {
+			data[i][j] = rand.Float64() + float64(j+1)
 		}
 	}
 	//call kmeans with 2-5 clusters and prints some results
 	for i := 2; i <= 5; i++ {
 		clusters, centers := kmeans(i, data)
-		fmt.Println(i, "clusters")
+		Println(i, "clusters")
 		fmt.Println("CENTERS:")
 		for j := range centers {
 			fmt.Println(centers[j])
@@ -42,7 +43,7 @@ func main() {
 //euclidean distance between two vectors. they must be the same length or this panics
 func calcDistance(v []float64, c []float64) (dist float64) {
 	dist = 0.0
-	for i := range(v){
+	for i := range v {
 		dist += math.Pow((v[i] - c[i]), 2)
 	}
 	dist = math.Sqrt(dist)
@@ -50,12 +51,12 @@ func calcDistance(v []float64, c []float64) (dist float64) {
 }
 
 //subtract two vectors taking the absolute value so it is positive
-func vectorDiff(v []float64, c []float64) (diff float64){
+func vectorDiff(v []float64, c []float64) (diff float64) {
 	diff = 0.0
 	for i := range v {
 		diff += math.Abs(v[i] - c[i])
 	}
-	return 
+	return
 }
 
 //calculate kmeans. k is a parameter as well as the data set to be clustered
@@ -64,7 +65,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 	r := rand.New(rand.NewSource(10000))
 	centers = make([][]float64, numClusters)
 	//make initial random guess at centers
-	for i := range(centers) {
+	for i := range centers {
 		centers[i] = make([]float64, numAttrs)
 		copy(centers[i], matrix[r.Int31n(int32(len(centers)))])
 	}
@@ -80,7 +81,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 			clusters[i].Init()
 		}
 		//make a new arrays for this iteration to sum each attribute in each cluster to find the mean
-		for i := range(sums) {
+		for i := range sums {
 			sums[i] = make([]float64, numAttrs)
 		}
 		//main clustering logic--loop through each input vector
@@ -100,16 +101,16 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 			//counts how many vectors are in each cluster
 			counts[bestFit] += 1
 			//add this vector's attributes to the rolling sum
-			for k := range(sums[0]) {
+			for k := range sums[0] {
 				sums[bestFit][k] += matrix[i][k]
 			}
 			//append this vector to the appropriate cluster
 			clusters[bestFit].PushBack(matrix[i])
 		}
 		//update the new centers as the mean of values in each cluster
-		for i := range(centers) {
+		for i := range centers {
 			if counts[i] != 0 {
-				for j := range(centers[i]) {
+				for j := range centers[i] {
 					newValue := (sums[i][j] / float64(counts[i]))
 					change += math.Abs(centers[i][j] - newValue)
 					centers[i][j] = newValue
@@ -119,7 +120,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters []list.List, centers 
 			} else {
 				index := r.Int31n(int32(len(centers)))
 				change += vectorDiff(centers[i], matrix[index])
-				copy(centers[i], matrix[index])	
+				copy(centers[i], matrix[index])
 			}
 		}
 	}
