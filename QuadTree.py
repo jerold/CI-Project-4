@@ -12,6 +12,10 @@ class Point:
 		self.x = self.x + dX
 		self.y = self.y + dY
 
+	def moveTo(self, inX, inY):
+		self.x = inX
+		self.y = inY
+
 	def dist(self, p2):
 		dx = self.x - p2.x
 		dy = self.y - p2.y
@@ -214,12 +218,12 @@ class Actor(object):
 		self.id = Actor.actorIdInc
 		Actor.actorIdInc = Actor.actorIdInc + 1
 		self.position = position
-		self.rangeOfVision = 0
+		self.rangeOfVision = 2
 		self.neighbors = []
 		self.moveHistory = []
 		self.shortTermMemory = []
 		self.close = {'Ant':[], 'Packet':[], 'Pheromone':[]}
-		self.highestPacketDensitySeen = 0
+		self.highestPacketDensitySeen = 0.0
 		Actor.quadTree.addActor(self)
 
 	def move(self, dX, dY):
@@ -227,6 +231,7 @@ class Actor(object):
 		oldPosition = Point(self.position.x, self.position.y)
 		self.position.move(dX, dY)
 
+		# horizontal edges are one, as are the vertical edges
 		if self.position.x > Actor.xMax:
 			self.position.x = self.position.x - Actor.xMax
 		elif self.position.x < 0:
@@ -239,6 +244,13 @@ class Actor(object):
 		Actor.quadTree.actorMoved(self, oldPosition)
 		self.moved(oldPosition)
 		# print(str(Actor.quadTree))
+
+	def moveTo(self, inX, inY):
+		"""Instead of moving by some delta, we move to a specific point"""
+		oldPosition = Point(self.position.x, self.position.y)
+		self.position.moveTo(inX, inY)
+		Actor.quadTree.actorMoved(self, oldPosition)
+		self.moved(oldPosition)
 
 	def setRangeOfVision(self, inRange):
 		"""Sometimes a range of vision must be changed after initialization, this is how it's done"""

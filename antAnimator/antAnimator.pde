@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.Arrays;
 
 Point3D[][] ants;
+int ffRate;
 
 void setup() {
   String filename=dataPath("antMotion.csv");
@@ -19,32 +20,52 @@ void setup() {
         //println(numbers[j*2] + " : " + numbers[j*2+1]);
       }
     }
-  } finally {
+  } 
+  finally {
     println("Done Reading");
   }
   size(500, 500);
   fill(255, 50);
   stroke(0, 0);
   strokeWeight(0);
+  ffRate = 10;
 }
 
 void draw() {
-  background(50);
+  background(80);
+  fill(120, 150, 180, 50);
   for (int i = 0 ; i < ants.length; i++) {
-    Point3D p = ants[i][frameCount%ants[i].length];
-    ellipse(p.x*5, p.y*5, p.z, p.z);
+    if (i == 200)
+      fill(120, 180, 150, 150);
+    Point3D p = ants[i][(frameCount*ffRate)%ants[i].length];
+    ellipse(p.x*4+50, p.y*4+50, p.z, p.z);
   }
-//  if (frameCount%4 == 0 && frameCount < ants[0].length) {
-//    saveFrame("movie/f######.png");
-//  }
+
+  // Isolate final frame
+  //  fill(50, 150, 50, 50);
+  //  for (int i = 0 ; i < ants.length; i++) {
+  //    Point3D p = ants[i][ants[i].length-1];
+  //    ellipse(p.x*4+50, p.y*4+50, 5, 5);
+  //  }
+  //  fill(150, 50, 50, 50);
+  //  for (int i = 0 ; i < ants.length; i++) {
+  //    Point3D p = ants[i][0];
+  //    ellipse(p.x*4+50, p.y*4+50, 5, 5);
+  //  }
+  text((frameCount*ffRate)%ants[0].length, 20, 460);
+  text(ants[0].length, 20, 480);
+  //  if (frameCount*ffRate < ants[0].length) {
+  //    saveFrame("movie/f######.png");
+  //  }
 }
 
 
-class Point3D{
+class Point3D {
   float x, y, z;
-  Point3D(float inX, float inY, float inZ){
+  Point3D(float inX, float inY, float inZ) {
     this.x = inX;
     this.y = inY;
     this.z = inZ;
   }
 }
+

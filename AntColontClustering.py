@@ -19,7 +19,7 @@ def varience(p, q):
 	"""Combined difference between two vectors"""
 	var = 0.0
 	for i in range(len(p)):
-		var = var + math.fabs(p[i] - q[i])
+		var = var + np.fabs(p[i] - q[i])
 	return var
 
 def standardDeviation(collection):
@@ -34,6 +34,17 @@ def standardDeviation(collection):
 		return standardDeviation
 	return 999999
 
+def averageVarience(packets):
+	"""Return the neighboring packet most different from all of the its peers"""
+	varSum = 0.0
+	for i, p in enumerate(packets):
+		pVarienceSum = 0.0
+		for op in packets:
+			if p is not op:
+				pVarienceSum = pVarienceSum + varience(p.pattern['p'], op.pattern['p'])
+		varSum = varSum + (pVarienceSum/len(packets))
+	return varSum/len(packets)
+
 
 ### Environment Classes ###############################################################################
 #######################################################################################################
@@ -47,6 +58,27 @@ class Packet(Actor):
 		super(self.__class__, self).__init__(position)
 		Packet.packets.append(self)
 		self.pattern = pattern
+		self.hasMembership = False
+
+	def update(self):
+		"""Pheromone levels decay over time"""
+		p = Point(self.position.x, self.position.y)
+		p.z = sum(self.pattern['p'])
+		self.moveHistory.append(p)
+
+	def updateClosest(self, actor, doAdd):
+		if doAdd:
+			self.close[str(type(actor).__name__)].append(actor)
+		else:
+			self.close[str(type(actor).__name__)].remove(actor)
+
+	def neighborAdded(self, actor):
+		"""SuperClass Hooke"""
+		self.updateClosest(actor, True)
+
+	def neighborRemoved(self, actor):
+		"""SuperClass Hooke"""
+		self.updateClosest(actor, False)
 
 
 class Pheromone(Actor):
@@ -81,28 +113,54 @@ class Ant(Actor):
 		self.setRangeOfVision(10)
 
 		self.carrying = False
-		self.packetInHand = []
-		self.mostSimilarPacketSeen = []
+		self.packetInHand = Packet
+		self.mostSimilarPacketSeen = Packet
 
 		self.heading = 0.0
 
 	def update(self):
 		"""Have the ant wander, lay down pheromones, and possibly move a packet around"""
 		self.depositPheromones()
+		self.processEnvironment()
 		mag = random.randrange(0, 5)
 		if self.carrying:
-			# Maybe the ant will drop whats in its hands
-			dropProbability = 0
-			self.heading = self.angleToActor(mostSimilarPacketSeen)
+			self.heading = self.randomAngle()
+			if random.random() <= .2:
+				self.heading = self.angleToActor(self.mostSimilarPacketSeen)
+			self.packetInHand.move(np.cos(self.heading)*mag, np.sin(self.heading)*mag)
 		else:
-			# Maybe the ant will pick something up
-			pickupProbability = 0
 			self.heading = self.angleFromPheromones()
 		self.move(np.cos(self.heading)*mag, np.sin(self.heading)*mag)
 
 	def processEnvironment(self):
 		"""Minimize looping through neighbors by doing all o(n) time work here"""
+		if self.carrying:
+			# Maybe the ant will drop whats in its hands
+			dropProbability = self.pDropOff(float(len(self.close['Packet']))/len(Packet.packets), float(self.highestPacketDensitySeen)/len(Packet.packets))
+			# print("PDO : " + str(round(dropProbability, 4)) + " : " + str(self.highestPacketDensitySeen) + " : " + str(len(self.close['Packet'])))
+			if random.random() <= dropProbability and len(self.close['Packet']) > 0:
+				# print("Drop!")
+				self.setOnMostSimilarOfNeightbors()
+				self.carrying = False
+		else:
+			# Maybe the ant will pick something up
+			pickupProbability = self.pPickUp(float(len(self.close['Packet']))/len(Packet.packets), float(self.highestPacketDensitySeen)/len(Packet.packets))
+			# print("PPU : " + str(round(pickupProbability, 4)) + " : " + str(self.highestPacketDensitySeen) + " : " + str(len(self.close['Packet'])))
+			if random.random() <= pickupProbability and len(self.close['Packet']) > 0:
+				# print("Pickup!")
+				self.grabMostDifferentOfNeighbors()
+				self.carrying = True
 
+	def mostSimilarPacketInMemory(self, packet):
+		"""Check the ant's short term memory for a pattern that is similar to the one now in its hands"""
+		simIndex = 0
+		simValue = 9999
+		for i, memPacket in enumerate(self.shortTermMemory):
+			memPacketVarience = varience(self.packetInHand.pattern['p'], memPacket.pattern['p'])
+			if memPacketVarience < simValue:
+				simValue = memPacketVarience
+				simIndex = i
+		return self.shortTermMemory[simIndex]
 
 	def depositPheromones(self):
 		for p in self.close['Pheromone']:
@@ -122,18 +180,6 @@ class Ant(Actor):
 		if self.position.x > actor.position.x:
 			ang = ang + np.pi
 		return ang%(2*np.pi)
-
-	# def angleFromPheromones(self):
-	# 	pheromones = self.neighborsOfType(Pheromone)
-	# 	if len(pheromones) > 0:
-	# 		pheromones.sort(key=lambda x: x.concentration, reverse=True)
-	# 		# print(", ".join(str(round(p.concentration, 3)) for p in pheromones))
-	# 		if pheromones[0].concentration > 200:
-	# 			return self.angleToActor(pheromones[-1])
-	# 		else:
-	# 			return self.randomAngle()
-	# 	else:
-	# 		return self.randomAngle()
 
 	def angleFromPheromones(self):
 		"""Dropping pheromones prevents ants from backtracking too much as they avoid high
@@ -156,24 +202,82 @@ class Ant(Actor):
 		else:
 			return self.randomAngle()
 
-	# def angleFromPheromones(self):
-	# 	pheromones = self.neighborsOfType(Pheromone)
-	# 	if len(pheromones) > 0:
-	# 		cSum = 0.0
-	# 		for p in pheromones:
-	# 			cSum = cSum + p.concentration
-	# 		weightedAngle = 0.0
-	# 		for p in pheromones:
-	# 			weightedAngle = weightedAngle + self.angleToActor(p)*(p.concentration/cSum)
-	# 		weightedAngle = (weightedAngle + np.pi)%(2*np.pi)
-	# 		# print(weightedAngle)
-	# 		return weightedAngle
-	# 	else:
-	# 		return self.randomAngle()
+	def grabMostDifferentOfNeighbors(self):
+		"""Return the neighboring packet most different from all of the its peers"""
+		highestVarienceValue = 0.0
+		highestVarienceIndex = 0
+		for i, p in enumerate(self.close['Packet']):
+			pVarienceSum = 0.0
+			for op in self.close['Packet']:
+				if p is not op:
+					pVarienceSum = pVarienceSum + varience(p.pattern['p'], op.pattern['p'])
+			if pVarienceSum > highestVarienceValue:
+				highestVarienceValue = pVarienceSum
+				highestVarienceIndex = i
+		self.packetInHand = self.close['Packet'][highestVarienceIndex]
+		self.packetInHand.moveTo(self.position.x, self.position.y)
+		self.mostSimilarPacketSeen = self.mostSimilarPacketInMemory(self.packetInHand)
 
-	def pPickUp(self):
-		"""LF Model of Standard Ant Clustering"""
-		return 0
+	def setOnMostSimilarOfNeightbors(self):
+		"""Return the neighboring packet most similar to the packet in the ant's hands"""
+		lowestVarienceValue = 99999.0
+		lowestVarienceIndex = 0
+		for i, op in enumerate(self.close['Packet']):
+			opVarience = 0.0
+			if self.packetInHand is not op:
+				opVarience = varience(self.packetInHand.pattern['p'], op.pattern['p'])
+				if opVarience < lowestVarienceValue:
+					lowestVarienceValue = opVarience
+					lowestVarienceIndex = i
+		msn = self.close['Packet'][lowestVarienceIndex]
+		self.packetInHand.moveTo(msn.position.x, msn.position.y)
+
+	def pPickUp(self, frac, const):
+		"""Density based pickup, more sparse == more likely to pick the item up. Const is set to the
+		highest fraction of items ever seen in the ants neighborhood, so as the ant starts seeing
+		bigger clusters it will be LESS selective about when it picks up"""
+		return (const/(const+0.0000001 + frac))**2
+
+	def pDropOff(self, frac, const):
+		"""Density based dropoff, more dense == more likely to drop the item off.  Const is set to the
+		highest fraction of items ever seen in the ants neighborhood, so as the ant starts seeing
+		bigger clusters it will be MORE selective about when it drops off"""
+		return (frac/(const+0.0000001 + frac))**2
+
+### LF Model for Similarity based Clustering ##########################################################
+#######################################################################################################
+
+	# def pPickUp(self):
+	# 	"""LF Model of Standard Ant Clustering. Probability is based on average difference of packets
+	# 	in the ants local area.  More disorder = better chance of picking something up"""
+	# 	if len(self.close['Packet']) > 0:
+	# 		const1 = 0.5
+	# 		avgSim = 0.0
+	# 		mostDiffIndex = 0
+	# 		mostDiff = 0.0
+	# 		for i, p in enumerate(self.close['Packet']):
+	# 			localSim = 0.0
+	# 			for op in self.close['Packet']:
+	# 				if p is not op:
+	# 					localSim = localSim + (varience(p.pattern['p'], op.pattern['p']))/2
+	# 			avgSim = avgSim + localSim
+	# 			if localSim > mostDiff:
+	# 				mostDiffIndex = i
+	# 		avgSim = avgSim/max(1, len(self.close['Packet']))
+	# 		# Put the most different item in the ant's hands. Not to take yet, just to touch
+	# 		self.packetInHand = self.close['Packet'][mostDiffIndex]
+	# 		return 1.0-((const1/(const1 + avgSim))**2)
+	# 	else:
+	# 		return 0.0
+
+	# def pDropOff(self):
+	# 	"""Like pickup, but now we compare similarity only to the item in the ant's hands"""
+	# 	const2 = 0.85
+	# 	localSim = 0.0
+	# 	for op in self.close['Packet']:
+	# 		if self.packetInHand is not op:
+	# 			localSim = localSim + (varience(self.packetInHand.pattern['p'], op.pattern['p']))/2
+	# 	return (const2/(const2 + localSim))**2
 
 	def updateClosest(self, actor, doAdd):
 		if doAdd:
@@ -181,14 +285,10 @@ class Ant(Actor):
 			if type(actor) == Packet:
 				self.highestPacketDensitySeen = max(self.highestPacketDensitySeen, len(self.close['Packet']))
 				self.shortTermMemory.append(actor)
-				if len(self.shortTermMemory) > 30:
+				if len(self.shortTermMemory) > 100:
 					self.shortTermMemory.pop(0)
 		else:
 			self.close[str(type(actor).__name__)].remove(actor)
-
-	def updateMoveHistory(self, oldPosition):
-		oldPosition.z = self.carrying
-		self.moveHistory.append(oldPosition)
 
 	def neighborAdded(self, actor):
 		"""SuperClass Hooke"""
@@ -200,7 +300,8 @@ class Ant(Actor):
 
 	def moved(self, oldPosition):
 		"""SuperClass Hooke"""
-		self.updateMoveHistory(oldPosition)
+		oldPosition.z = self.carrying
+		self.moveHistory.append(oldPosition)
 
 
 class Colony:
@@ -219,12 +320,12 @@ if __name__=="__main__":
 	# 	# print(str(packets[i].id) + " : " + str(packets[i].getX()) + ", " + str(packets[i].getY()))
 
 	for i in range(200):
-		p = Packet("p1", Point(random.randrange(0, 100), random.randrange(0, 100)))
+		p = Packet({'p':[random.random()*3, random.random()*3, random.random()*3]}, Point(random.randrange(0, 100), random.randrange(0, 100)))
 	interPheromoneDist = 7
 	for x in range(120/interPheromoneDist):
 		for y in range(120/interPheromoneDist):
 			p = Pheromone(Point(x*interPheromoneDist-10, y*interPheromoneDist-10))
-	for i in range(10):
+	for i in range(15):
 		a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
 
 	print("Packets:" + str(len(Packet.packets)))
@@ -236,34 +337,61 @@ if __name__=="__main__":
 	# 	print(str(n) + " " + str(Ant.ants[0].dist(n)))
 	# print("")
 
-	for i in range(1000):
-		if i%100 == 0:
-			print("Move: " + str(i) + ", D[" + str(Ant.ants[0].highestPacketDensitySeen) + "], P[" + str(len(Ant.ants[0].close['Packet'])) + "]")
+	# Run Simulation
+	for i in range(100000):
+		if i%1000 == 0:
+			print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "], P[" + str(len(Ant.ants[0].close['Packet'])) + "]")
+		for p in Packet.packets:
+			p.update()
 		for p in Pheromone.pheromones:
 			p.update()
 		for a in Ant.ants:
 			a.update()
 
-	# Plot
-	# x = [p.position.x for p in Packet.packets]
-	# y = [p.position.y for p in Packet.packets]
-	# area = [2.0 for p in Packet.packets]
-	# alph = [.5 for p in Packet.packets]
+	# Collect Clustering Data
+	clusterId = 0
+	outLayers = 0
+	for p in Packet.packets:
+		if not p.hasMembership:
+			if len(p.close['Packet']) > 0:
+				# New Cluster Collect information on this cluster
+				print("Cluster " + str(clusterId) + ":")
+				cluster = [p] + p.close['Packet']
+				print("   " + str(len(cluster)) + " patterns in cluster.")
+				print("   " + str(float(len(cluster))/len(Packet.packets)*100) + " percent of total.")
+				print("   " + str(float(averageVarience(cluster))) + " average varience.")
+				for op in p.close['Packet']:
+					op.hasMembership = True
+				clusterId = clusterId + 1
+			else:
+				outLayers = outLayers + 1
+			p.hasMembership = True
+	print("OutLayers " + str(outLayers))
 
-	x = [p.position.x for p in Pheromone.pheromones]
-	y = [p.position.y for p in Pheromone.pheromones]
-	area = [p.concentration for p in Pheromone.pheromones]
-
-	for a in Ant.ants:
-		x = x + [h.x for h in a.moveHistory]
-		y = y + [h.y for h in a.moveHistory]
-		area = area + [h.z*10+1 for h in a.moveHistory]
-
+	# Create Recording
 	with open('antAnimator/antMotion.csv', 'w') as file:
+		for p in Packet.packets:
+			file.write(",".join(str(h.x)+","+str(h.y)+","+str(h.z*10+4) for h in p.moveHistory)+"\n")
 		for a in Ant.ants:
 			file.write(",".join(str(h.x)+","+str(h.y)+","+str(h.z*10+4) for h in a.moveHistory)+"\n")
-		for p in Pheromone.pheromones:
-			file.write(",".join(str(p.position.x)+","+str(p.position.y)+","+str(c/3) for c in p.cHistory)+"\n")
+		# for p in Pheromone.pheromones:
+		# 	file.write(",".join(str(p.position.x)+","+str(p.position.y)+","+str(c/3) for c in p.cHistory)+"\n")
+
+
+	# Plot
+	x = [p.position.x for p in Packet.packets]
+	y = [p.position.y for p in Packet.packets]
+	area = [2.0 for p in Packet.packets]
+	# alph = [.5 for p in Packet.packets]
+
+	# x = x + [p.position.x for p in Pheromone.pheromones]
+	# y = y + [p.position.y for p in Pheromone.pheromones]
+	# area = area + [p.concentration for p in Pheromone.pheromones]
+
+	# for a in Ant.ants:
+	# 	x = x + [h.x for h in a.moveHistory]
+	# 	y = y + [h.y for h in a.moveHistory]
+	# 	area = area + [h.z*10+1 for h in a.moveHistory]
 
 	# x = [p.position.x for p in Packet.packets] + [a.position.x for a in Ant.ants]
 	# y = [p.position.y for p in Packet.packets] + [a.position.y for a in Ant.ants]
