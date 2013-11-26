@@ -171,9 +171,12 @@ type Ant struct {
 	legCount	int
 }
 func MakeAnt(x, y float64) (a Ant) {
-	a.Init(x, y)
-	a.legCount = 6
+	a.InitAnt(x, y)
 	return a
+}
+func (a *Ant) InitAnt(x, y float64) {
+	a.InitActor(x, y)
+	a.legCount = 6
 }
 func main() {
 	// Test Distance and Movement
