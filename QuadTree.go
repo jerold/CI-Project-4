@@ -22,9 +22,12 @@ type Point struct {
 	z	float64
 }
 func MakePoint(x, y float64) (p Point) {
+	p.InitPoint(x, y)
+	return p
+}
+func (p *Point) InitPoint(x, y float64) {
 	p.x = x
 	p.y = y
-	return p
 }
 func (p *Point) GetX() (float64) {
 	return p.x
@@ -109,12 +112,11 @@ type Actor struct {
 	highestDensity	int
 }
 func MakeActor(x, y float64) (a Actor) {
-	a.Init(x, y)
+	a.InitActor(x, y)
 	return a
 }
-func (a *Actor) Init(x, y float64) {
-	a.x = x
-	a.y = y
+func (a *Actor) InitActor(x, y float64) {
+	a.InitPoint(x, y)
 	a.xMax = 100
 	a.yMax = 100
 	if qt.maxDepth == 0 {
