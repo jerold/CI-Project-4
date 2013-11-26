@@ -28,7 +28,7 @@ void setup() {
   fill(255, 50);
   stroke(0, 0);
   strokeWeight(0);
-  ffRate = 10;
+  ffRate = 1;
 }
 
 void draw() {
@@ -38,6 +38,7 @@ void draw() {
     if (i == 200)
       fill(120, 180, 150, 150);
     Point3D p = ants[i][(frameCount*ffRate)%ants[i].length];
+    println(p.x + " " + p.y + " " + p.z);
     ellipse(p.x*4+50, p.y*4+50, p.z, p.z);
   }
 
