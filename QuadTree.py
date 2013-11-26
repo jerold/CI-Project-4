@@ -223,7 +223,7 @@ class Actor(object):
 		self.moveHistory = []
 		self.shortTermMemory = []
 		self.close = {'Ant':[], 'Packet':[], 'Pheromone':[]}
-		self.highestPacketDensitySeen = 0.0
+		self.highestPacketDensitySeen = 0
 		Actor.quadTree.addActor(self)
 
 	def move(self, dX, dY):

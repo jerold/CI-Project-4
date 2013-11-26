@@ -3,6 +3,7 @@ from QuadTree import Actor
 import random
 import numpy as np
 import matplotlib.pyplot as plt
+from patternSet import PatternSet
 
 
 ### Assistance Methods ################################################################################
@@ -65,6 +66,26 @@ class Packet(Actor):
 		p = Point(self.position.x, self.position.y)
 		p.z = sum(self.pattern['p'])
 		self.moveHistory.append(p)
+
+	@classmethod
+	def clusterStats(self):
+		clusterId = 0
+		outLayers = 0
+		for p in Packet.packets:
+			if not p.hasMembership:
+				if len(p.close['Packet']) > 3:
+					# New Cluster Collect information on this cluster
+					cluster = [p] + p.close['Packet']
+					print("Cluster " + str(clusterId) + ": Cnt[" + str(len(cluster)) + "] Prc[" + str(round(float(len(cluster))/len(Packet.packets)*100, 3)) + "] Var[" + str(round(float(averageVarience(cluster)), 3)) + "]")
+					for op in p.close['Packet']:
+						op.hasMembership = True
+					clusterId = clusterId + 1
+				else:
+					outLayers = outLayers + 1
+				p.hasMembership = True
+		for p in Packet.packets:
+			p.hasMembership = False
+		print("OutLayers " + str(outLayers))
 
 	def updateClosest(self, actor, doAdd):
 		if doAdd:
@@ -313,60 +334,62 @@ class Colony:
 #######################################################################################################
 
 if __name__=="__main__":
-	# for i in range(200):
-	# 	p = Packet("p1", Point(random.randrange(0, 100), random.randrange(0, 100)))
-	# for i in range(20):
-	# 	a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
-	# 	# print(str(packets[i].id) + " : " + str(packets[i].getX()) + ", " + str(packets[i].getY()))
+	# Batch: (ordered by least time complex to most)
+	# allDataTypes = ['data/iris/iris.json',
+	#				 'data/seeds/seeds.json',
+	#				 'data/glass/glass.json',
+	#				 'data/wine/wine.json',
+	#				 'data/zoo/zoo.json',
+	#				 'data/heart/heart.json',
+	#				 'data/car/car.json',
+	#				 'data/yeast/yeast.json',
+	#				 'data/block/pageblocks.json',
+	#				 'data/ionosphere/ionosphere.json']
 
-	for i in range(200):
-		p = Packet({'p':[random.random()*3, random.random()*3, random.random()*3]}, Point(random.randrange(0, 100), random.randrange(0, 100)))
-	interPheromoneDist = 7
-	for x in range(120/interPheromoneDist):
-		for y in range(120/interPheromoneDist):
-			p = Pheromone(Point(x*interPheromoneDist-10, y*interPheromoneDist-10))
-	for i in range(15):
-		a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
+	# Single:
+	# allDataTypes = ['data/iris/iris.json']
+	# allDataTypes = ['data/seeds/seeds.json']
+	# allDataTypes = ['data/glass/glass.json']
+	# allDataTypes = ['data/wine/wine.json']
+	allDataTypes = ['data/zoo/zoo.json']
+	# allDataTypes = ['data/heart/heart.json']
+	# allDataTypes = ['data/car/car.json']
+	# allDataTypes = ['data/yeast/yeast.json']
+	# allDataTypes = ['data/block/pageblocks.json']
+	# allDataTypes = ['data/ionosphere/ionosphere.json']
 
-	print("Packets:" + str(len(Packet.packets)))
-	print("Pheromone:" + str(len(Pheromone.pheromones)))
-	print("Ants:" + str(len(Ant.ants)))
+	runsPerDataSet = 1 #10
+	iterations = 2000
+	for dataSet in allDataTypes:
+		for run in range(runsPerDataSet):
+			pSet = PatternSet(dataSet)
+			for pattern in pSet.patterns:
+				p = Packet(pattern, Point(random.randrange(0, 100), random.randrange(0, 100)))
+			Packet.baseVarience = averageVarience(Packet.packets)
+			print("Base Varience: " + str(Packet.baseVarience))
 
-	# Ant.ants[0].move(20, 20)
-	# for n in Ant.ants[0].neighbors:
-	# 	print(str(n) + " " + str(Ant.ants[0].dist(n)))
-	# print("")
+			interPheromoneDist = 7
+			for x in range(120/interPheromoneDist):
+				for y in range(120/interPheromoneDist):
+					p = Pheromone(Point(x*interPheromoneDist-10, y*interPheromoneDist-10))
+			for i in range(5):
+				a = Ant(Point(random.randrange(0, 100), random.randrange(0, 100)))
+			print("Packets:" + str(len(Packet.packets)))
+			print("Pheromone:" + str(len(Pheromone.pheromones)))
+			print("Ants:" + str(len(Ant.ants)))
 
-	# Run Simulation
-	for i in range(100000):
-		if i%1000 == 0:
-			print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "], P[" + str(len(Ant.ants[0].close['Packet'])) + "]")
-		for p in Packet.packets:
-			p.update()
-		for p in Pheromone.pheromones:
-			p.update()
-		for a in Ant.ants:
-			a.update()
+			# Run Simulation
+			for i in range(10000):
+				if i%100 == 0:
+					print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "], P[" + str(len(Ant.ants[0].close['Packet'])) + "]")
+					Packet.clusterStats()
+				for p in Packet.packets:
+					p.update()
+				for p in Pheromone.pheromones:
+					p.update()
+				for a in Ant.ants:
+					a.update()
 
-	# Collect Clustering Data
-	clusterId = 0
-	outLayers = 0
-	for p in Packet.packets:
-		if not p.hasMembership:
-			if len(p.close['Packet']) > 0:
-				# New Cluster Collect information on this cluster
-				print("Cluster " + str(clusterId) + ":")
-				cluster = [p] + p.close['Packet']
-				print("   " + str(len(cluster)) + " patterns in cluster.")
-				print("   " + str(float(len(cluster))/len(Packet.packets)*100) + " percent of total.")
-				print("   " + str(float(averageVarience(cluster))) + " average varience.")
-				for op in p.close['Packet']:
-					op.hasMembership = True
-				clusterId = clusterId + 1
-			else:
-				outLayers = outLayers + 1
-			p.hasMembership = True
-	print("OutLayers " + str(outLayers))
 
 	# Create Recording
 	with open('antAnimator/antMotion.csv', 'w') as file:
