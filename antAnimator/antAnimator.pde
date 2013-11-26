@@ -3,6 +3,8 @@ import java.util.Arrays;
 
 Point3D[][] ants;
 int ffRate;
+int eScale;
+int realSize;
 
 void setup() {
   String filename=dataPath("antMotion.csv");
@@ -24,22 +26,42 @@ void setup() {
   finally {
     println("Done Reading");
   }
-  size(500, 500);
+  
+  realSize = 100;
+  eScale = 5;
+  
+  size(realSize*eScale, realSize*eScale);
   fill(255, 50);
   stroke(0, 0);
   strokeWeight(0);
-  ffRate = 1;
+  ffRate = 10;
 }
 
 void draw() {
-  background(80);
-  fill(120, 150, 180, 50);
+  int drawFrame = (frameCount*ffRate)%ants[0].length;
+  // int drawFrame = ants[0].length-1;
+  
+  background(40);
   for (int i = 0 ; i < ants.length; i++) {
-    if (i == 200)
-      fill(120, 180, 150, 150);
-    Point3D p = ants[i][(frameCount*ffRate)%ants[i].length];
-    println(p.x + " " + p.y + " " + p.z);
-    ellipse(p.x*4+50, p.y*4+50, p.z, p.z);
+    Point3D p = ants[i][drawFrame];
+    if (i >= 155) {
+      fill(180, 180, 180, 20);
+      stroke(0, 0);
+      strokeWeight(0);
+      ellipse(p.x*4+50, p.y*4+50, p.z*3, p.z*3);
+    } else if (i >= 150) {
+      fill(0, 0);
+      stroke(120, 180, 150, 150);
+      strokeWeight(3);
+      ellipse(p.x*4+50, p.y*4+50, 20*eScale, 20*eScale);
+    } else {
+      // fill(120, 150, 180, 20);
+      fill(0, 0);
+      stroke(120, 150, 180, 150);
+      strokeWeight(3);
+      // ellipse(p.x*4+50, p.y*4+50, p.z*0.3, p.z*0.3);
+      ellipse(p.x*4+50, p.y*4+50, 6*eScale, 6*eScale);
+    }
   }
 
   // Isolate final frame
@@ -53,7 +75,8 @@ void draw() {
   //    Point3D p = ants[i][0];
   //    ellipse(p.x*4+50, p.y*4+50, 5, 5);
   //  }
-  text((frameCount*ffRate)%ants[0].length, 20, 460);
+  fill(255, 150);
+  text(drawFrame, 20, 460);
   text(ants[0].length, 20, 480);
   //  if (frameCount*ffRate < ants[0].length) {
   //    saveFrame("movie/f######.png");

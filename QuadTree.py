@@ -218,7 +218,7 @@ class Actor(object):
 		self.id = Actor.actorIdInc
 		Actor.actorIdInc = Actor.actorIdInc + 1
 		self.position = position
-		self.rangeOfVision = 2
+		self.rangeOfVision = 0
 		self.neighbors = []
 		self.moveHistory = []
 		self.shortTermMemory = []
