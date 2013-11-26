@@ -1,7 +1,12 @@
 package main
 
+import (
+	"fmt"
+	"vectorOperations"
+)
+
 func main() {
-	filename := "../data/iris/iris.json"
+	filename := "../../data/iris/iris.json"
 	data := readJson(filename)
 	targets := make([]float64, len(data))
 	patterns := make([][]float64, len(data))
@@ -11,7 +16,7 @@ func main() {
 		//patterns[i] = append(patterns[i], item.T)
 	}
 	//fmt.Println(trainIndex)
-	clusters, centers := kmeans(getNumClasses(targets), patterns)
+	clusters, centers := kmeans(vectorOperations.GetNumClasses(targets), patterns)
 	fmt.Println("CENTERS:")
 	for j := range centers {
 		fmt.Println(centers[j])
@@ -29,14 +34,14 @@ func main() {
 
 	//competitive learning call on same data
 	net := Network{}
-	net.initNet(len(patterns[0]), getNumClasses(targets))
-	for i := 0; i < getNumClasses(targets); i++ {
+	net.initNet(len(patterns[0]), vectorOperations.GetNumClasses(targets))
+	for i := 0; i < vectorOperations.GetNumClasses(targets); i++ {
 		net.Net[1].Layer[i].Weights = make([]float64, len(patterns[0]))
 		net.Net[1].Layer[i].initWeights(patterns)
 		fmt.Println(net.Net[1].Layer[i].Weights)
 	}
 
-	var lClusters [][][]float64 = make([][][]float64, getNumClasses(targets))
+	var lClusters [][][]float64 = make([][][]float64, vectorOperations.GetNumClasses(targets))
 	for i := range lClusters {
 		lClusters[i] = make([][]float64, 0)
 	}

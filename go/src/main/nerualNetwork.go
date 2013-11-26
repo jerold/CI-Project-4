@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"math/rand"
+	"vectorOperations"
 )
 
 var learningRate float64 = 0.5
@@ -53,7 +54,7 @@ func (net *Network) compete(vector []float64) (winner int) {
 		//for j := range n.Weights {
 		//	sum += n.Weights[j] * vector[i]
 		//}
-		sum = calcDistance(n.Weights, vector)
+		sum = vectorOperations.CalcDistance(n.Weights, vector)
 		if sum > max {
 			max = sum
 			winner = i

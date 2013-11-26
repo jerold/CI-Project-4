@@ -1,7 +1,12 @@
 package vectorOperations
 
+import (
+	"container/list"
+	"math"
+)
+
 //euclidean distance between two vectors. they must be the same length or this panics
-func calcDistance(v []float64, c []float64) (dist float64) {
+func CalcDistance(v []float64, c []float64) (dist float64) {
 	dist = 0.0 //init distance between two vectors to 0
 	//loop thru the elements, subtract them, square them and sum em up
 	for i := range v {
@@ -13,7 +18,7 @@ func calcDistance(v []float64, c []float64) (dist float64) {
 }
 
 //subtract two vectors taking the absolute value so it is positive
-func vectorDiff(v []float64, c []float64) (diff float64) {
+func VectorDiff(v []float64, c []float64) (diff float64) {
 	diff = 0.0
 	for i := range v {
 		diff += math.Abs(v[i] - c[i])
@@ -22,7 +27,7 @@ func vectorDiff(v []float64, c []float64) (diff float64) {
 }
 
 //function to determine if two vectors are the same
-func vectorCompare(v1 []float64, v2 []float64) bool {
+func VectorCompare(v1 []float64, v2 []float64) bool {
 	var same bool = true
 	for i := range v1 {
 		if math.Abs(v1[i]-v2[i]) > 0.0001 {
@@ -34,18 +39,18 @@ func vectorCompare(v1 []float64, v2 []float64) bool {
 }
 
 //function to find the mean of the input matrix. returns a vector that is the mean.
-func findMean(data [][]float64) (mean []float64) {
+func FindMean(data [][]float64) (mean []float64) {
 	return
 }
 
-func compareClusters(correct [][][]float64, clustered [][][]float64) []int {
+func CompareClusters(correct [][][]float64, clustered [][][]float64) []int {
 	var done bool = false
 	count := make([]int, len(correct))
 	for i := range correct {
 		for _, v1 := range correct[i] {
 			for k := range clustered {
 				for _, v2 := range clustered[k] {
-					if vectorCompare(v1, v2) {
+					if VectorCompare(v1, v2) {
 						if i == k {
 							count[i]++
 							done = true
@@ -63,7 +68,7 @@ func compareClusters(correct [][][]float64, clustered [][][]float64) []int {
 }
 
 //function to determine the number of classes based on input classifications
-func getNumClasses(t []float64) int {
+func GetNumClasses(t []float64) int {
 	classes := list.New()
 	classes.Init()
 	count := 1
@@ -94,8 +99,8 @@ func getNumClasses(t []float64) int {
 }
 
 //function to make cluster according to input data
-func makeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
-	clusters = make([][][]float64, getNumClasses(t))
+func MakeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
+	clusters = make([][][]float64, GetNumClasses(t))
 	for i := range clusters {
 		clusters[i] = make([][]float64, 5)
 	}
@@ -105,7 +110,7 @@ func makeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
 	return clusters
 }
 
-func moveClusters(c [][][]float64) [][][]float64 {
+func MoveClusters(c [][][]float64) [][][]float64 {
 	counts := make([][]int, len(c))
 	for i := range counts {
 		counts[i] = make([]int, len(c))

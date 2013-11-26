@@ -1,12 +1,9 @@
 package main
 
 import (
-	"container/list"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
-	"math"
 )
 
 type Pattern struct {

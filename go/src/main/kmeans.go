@@ -3,6 +3,7 @@ package main
 import (
 	"math"
 	"math/rand"
+	"vectorOperations"
 )
 
 //calculate kmeans. k is a parameter as well as the data set to be clustered
@@ -36,7 +37,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters [][][]float64, center
 			minDist := 10000.0
 			//loop through each center and see which center is closer to the current input vector
 			for j := 0; j < numClusters; j++ {
-				dist := calcDistance(matrix[i], centers[j])
+				dist := vectorOperations.CalcDistance(matrix[i], centers[j])
 				if dist < minDist {
 					minDist = dist
 					bestFit = j
@@ -63,7 +64,7 @@ func kmeans(numClusters int, matrix [][]float64) (clusters [][][]float64, center
 				//this is really not required unless random vectors are created randomly
 			} else {
 				index := r.Int31n(int32(len(centers)))
-				change += vectorDiff(centers[i], matrix[index])
+				change += vectorOperations.VectorDiff(centers[i], matrix[index])
 				copy(centers[i], matrix[index])
 			}
 		}
