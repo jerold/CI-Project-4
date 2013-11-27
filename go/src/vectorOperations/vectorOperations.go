@@ -38,34 +38,62 @@ func VectorCompare(v1 []float64, v2 []float64) bool {
 	return same
 }
 
-//function to find the mean of the input matrix. returns a vector that is the mean.
-func FindMean(data [][]float64) (mean []float64) {
+//function to calculate the variance in a cluster of data
+func FindVariance(data [][]float64, mean []float64) (variance []float64) {
+	variance = make([]float64, len(mean))
+	for _, vector := range data {
+		for j, item := range vector {
+			variance[j] += math.Pow((item - mean[j]), 2.0)
+		}
+	}
+	for i := range variance {
+		variance[i] /= float64(len(data) - 1)
+	}
 	return
 }
 
-func CompareClusters(correct [][][]float64, clustered [][][]float64) []int {
-	var done bool = false
-	count := make([]int, len(correct))
-	for i := range correct {
-		for _, v1 := range correct[i] {
-			for k := range clustered {
-				for _, v2 := range clustered[k] {
-					if VectorCompare(v1, v2) {
-						if i == k {
-							count[i]++
-							done = true
-							break
-						}
-					}
-				}
-				if done {
-					break
-				}
-			}
+//function to find the mean of the input matrix. returns a vector that is the mean.
+func FindMean(data [][]float64) (mean []float64) {
+	if len(data) == 0 {
+		mean = make([]float64, 1)
+		return
+	}
+	mean = make([]float64, len(data[0]))
+	for _, vector := range data {
+		//var sum float64 = 0.0
+		for j, item := range vector {
+			mean[j] += item
 		}
 	}
-	return count
+	for i := range mean {
+		mean[i] /= float64(len(data))
+	}
+	return
 }
+
+//func CompareClusters(correct [][][]float64, clustered [][][]float64) []int {
+//	var done bool = false
+//	count := make([]int, len(correct))
+//	for i := range correct {
+//		for _, v1 := range correct[i] {
+//			for k := range clustered {
+//				for _, v2 := range clustered[k] {
+//					if VectorCompare(v1, v2) {
+//						if i == k {
+//							count[i]++
+//							done = true
+//							break
+//						}
+//					}
+//				}
+//				if done {
+//					break
+//				}
+//			}
+//		}
+//	}
+//	return count
+//}
 
 //function to determine the number of classes based on input classifications
 func GetNumClasses(t []float64) int {

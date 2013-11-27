@@ -41,7 +41,8 @@ func main() {
 		fmt.Println(net.Net[1].Layer[i].Weights)
 	}
 
-	var lClusters [][][]float64 = make([][][]float64, vectorOperations.GetNumClasses(targets))
+	//var lClusters [][][]float64 = make([][][]float64, vectorOperations.GetNumClasses(targets))
+	var lClusters [][][]float64 = make([][][]float64, 5)
 	for i := range lClusters {
 		lClusters[i] = make([][]float64, 0)
 	}
@@ -52,6 +53,8 @@ func main() {
 	for i := range lClusters {
 		fmt.Println("CLUSTER", i)
 		fmt.Printf("There are %d elements in this cluster \n", len(lClusters[i]))
+		fmt.Println("The mean of this cluster is", vectorOperations.FindMean(lClusters[i]))
+		fmt.Println("The variance of this cluster is", vectorOperations.FindVariance(lClusters[i], vectorOperations.FindMean(lClusters[i])))
 		fmt.Println(lClusters[i])
 	}
 	fmt.Println("Done")
