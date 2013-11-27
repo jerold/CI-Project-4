@@ -1,5 +1,6 @@
 from QuadTree import Point
 from QuadTree import Actor
+import time
 import random
 import numpy as np
 import matplotlib.pyplot as plt
@@ -141,7 +142,7 @@ class Packet(Actor):
 				avgVarience = avgVarience + c.varience()
 		avgVarience = avgVarience/len(Cluster.clusters)
 		with open('records/'+str(setName)+'.csv', 'a') as file:
-			file.write(str(len(Packet.packets))+","+str(len(Cluster.clusters))+","+str(len(Cluster.outLayers))+","+str(round(Packet.baseVarience, 4))+","+str(round(avgVarience, 4))+",".join(str(round(c.varience, 4)) for c in Cluster.clusters)+"\n")
+			file.write(str(len(Packet.packets))+","+str(len(Cluster.clusters))+","+str(len(Cluster.outLayers))+","+str(round(Packet.baseVarience, 4))+","+str(round(avgVarience, 4))+",".join(str(round(c.varience(), 4)) for c in Cluster.clusters)+"\n")
 		print("OutLayers " + str(len(Cluster.outLayers)))
 		for p in Packet.packets:
 			p.hasMembership = False
@@ -420,13 +421,17 @@ if __name__=="__main__":
 			colony = Colony(5, pSet.patterns)
 
 			# Run Simulation
-			iterations = 40000
+			iterations = 90000
+			startTime = time.time()
 			for i in range(iterations):
 				colony.update()
 				if i%100 == 0:
 					print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "]")
 					Packet.clusterStats(setName)
+			endTime = time.time()
+			print("Run Time: [" + str(round(endTime-startTime, 2)) + " sec]")
 
+	print("Data Set: " + setName)
 	print("Packets:" + str(len(Packet.packets)))
 	print("Ants:" + str(len(Ant.ants)))
 	print("Pheromones:" + str(len(Pheromone.pheromones)))
@@ -435,8 +440,8 @@ if __name__=="__main__":
 	with open('antAnimator/antMotion.csv', 'w') as file:
 		for p in Packet.packets:
 			file.write(",".join(str(ph.x)+","+str(ph.y)+","+str(p.rangeOfVision) for ph in p.moveHistory)+"\n")
-		for a in Ant.ants:
-			file.write(",".join(str(ah.x)+","+str(ah.y)+","+str(a.rangeOfVision) for ah in a.moveHistory)+"\n")
+		# for a in Ant.ants:
+		# 	file.write(",".join(str(ah.x)+","+str(ah.y)+","+str(a.rangeOfVision) for ah in a.moveHistory)+"\n")
 		# for f in Pheromone.pheromones:
 		# 	file.write(",".join(str(f.position.x)+","+str(f.position.y)+","+str(fc/3) for fc in f.cHistory)+"\n")
 

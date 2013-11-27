@@ -38,10 +38,12 @@ void setup() {
 }
 
 void draw() {
-  int drawFrame = (frameCount*ffRate)%ants[0].length;
-  // int drawFrame = ants[0].length-1;
+  //int drawFrame = (frameCount*ffRate)%ants[0].length;
+  //int drawFrame = ants[0].length-1;
+  int drawFrame = 0;
   
-  background(40);
+  background(255);
+  // background(40);
   for (int i = 0 ; i < ants.length; i++) {
     Point3D p = ants[i][drawFrame];
     if (i >= 155) {
@@ -51,13 +53,14 @@ void draw() {
       ellipse(p.x*4+50, p.y*4+50, p.z*3, p.z*3);
     } else if (i >= 150) {
       fill(0, 0);
-      stroke(120, 180, 150, 150);
+      // stroke(120, 180, 150, 150);
       strokeWeight(3);
       ellipse(p.x*4+50, p.y*4+50, 20*eScale, 20*eScale);
     } else {
       // fill(120, 150, 180, 20);
       fill(0, 0);
-      stroke(120, 150, 180, 150);
+      // stroke(120, 150, 180, 150);
+      stroke(0, 0, 0, 150);
       strokeWeight(3);
       // ellipse(p.x*4+50, p.y*4+50, p.z*0.3, p.z*0.3);
       ellipse(p.x*4+50, p.y*4+50, 6*eScale, 6*eScale);
