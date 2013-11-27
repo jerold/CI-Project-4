@@ -170,7 +170,7 @@ class QuadTree(object):
 		self.hasChildren = True
 
 	def collectActors(self):
-		"""Typically performed when there are not enough Children maintained by the Quad's children
+		"""Performed when there are not enough Children maintained by the Quad's children
 		to justify have children, we collect child actors and later delete the children"""
 		if self.hasChildren:
 			for x in range(2):
