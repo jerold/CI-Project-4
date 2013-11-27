@@ -9,12 +9,12 @@ import (
 
 
 // ----- Point ----------------------------------------------------------------------
-
-type Movable interface {
+type Point2D interface {
 	GetX() float64
 	GetY() float64
 	Move(dx, dy float64)
 	MoveTo(x, y float64)
+	Dist(p Point2D) float64
 }
 type Point struct {
 	x	float64
@@ -22,10 +22,10 @@ type Point struct {
 	z	float64
 }
 func MakePoint(x, y float64) (p Point) {
-	p.InitPoint(x, y)
+	p.initPoint(x, y)
 	return p
 }
-func (p *Point) InitPoint(x, y float64) {
+func (p *Point) initPoint(x, y float64) {
 	p.x = x
 	p.y = y
 }
@@ -43,7 +43,7 @@ func (p *Point) MoveTo(x, y float64) {
 	p.x = x
 	p.y = y
 }
-func (p *Point) Dist(q Movable) float64 {
+func (p *Point) Dist(q Point2D) float64 {
 	return math.Sqrt((math.Pow(p.GetX() - q.GetX(), 2) + math.Pow(p.GetY() - q.GetY(), 2)))
 }
 
@@ -94,29 +94,32 @@ func MakeQuad(minPoint Point, maxPoint Point, currentDepth int) (q QuadTree) {
 
 var actorIdInc = 0
 
-type HasNeighbors interface {
-	GetID() int
-	AddNeighbor(b *Actor)
-	RemoveNeighbor(b *Actor)
+type Actor interface {
+	Point2D
+	GetID()				int
+	GetVisualRange()	float64
+	AddNeighbor(b Actor)
+	RemoveNeighbor(b Actor)
+	GetNeighbors()		[]Actor
 }
-type Actor struct {
+type ActorBase struct {
 	Point
 	xMax			float64
 	yMax			float64
 	id				int
-	rangeOfVision	float64
-	neighbors		[]*Actor
+	visualRange		float64
+	neighbors		[]Actor
 	maxMemory		int
-	memory			[]*Actor
+	memory			[]Actor
 	neighborsByType	map[string][]Actor
 	highestDensity	int
 }
-func MakeActor(x, y float64) (a Actor) {
-	a.InitActor(x, y)
+func MakeActor(x, y float64) (a ActorBase) {
+	a.initActor(x, y)
 	return a
 }
-func (a *Actor) InitActor(x, y float64) {
-	a.InitPoint(x, y)
+func (a *ActorBase) initActor(x, y float64) {
+	a.initPoint(x, y)
 	a.xMax = 100
 	a.yMax = 100
 	if qt.maxDepth == 0 {
@@ -124,20 +127,23 @@ func (a *Actor) InitActor(x, y float64) {
 	}
 	a.id = actorIdInc
 	actorIdInc++
-	a.rangeOfVision = 2
-	a.neighbors = make([]*Actor, 0)
+	a.visualRange = 2
+	a.neighbors = make([]Actor, 0)
 	a.maxMemory = 100
-	a.memory = make([]*Actor, 0, a.maxMemory)
+	a.memory = make([]Actor, 0, a.maxMemory)
 	a.neighborsByType = make(map[string][]Actor)
 	a.highestDensity = 0
 }
-func (a *Actor) GetID() int {
+func (a *ActorBase) GetID() int {
 	return a.id
 }
-func (a *Actor) AddNeighbor(b *Actor) {
+func (a *ActorBase) GetVisualRange() float64 {
+	return a.visualRange
+}
+func (a *ActorBase) AddNeighbor(b Actor) {
 	inNeighbors := false
 	for i := range a.neighbors {
-		if a.neighbors[i].id == b.GetID() {
+		if a.neighbors[i].GetID() == b.GetID() {
 			inNeighbors = true
 		}
 	}
@@ -145,17 +151,17 @@ func (a *Actor) AddNeighbor(b *Actor) {
 		a.neighbors = append(a.neighbors, b)
 	}
 }
-func (a *Actor) RemoveNeighbor(b *Actor) {
+func (a *ActorBase) RemoveNeighbor(b Actor) {
 	inNeighbors := false
 	index := 0
 	for i := range a.neighbors {
-		if a.neighbors[i].id == b.GetID() {
+		if a.neighbors[i].GetID() == b.GetID() {
 			inNeighbors = true
 			index = i
 		}
 	}
 	if inNeighbors {
-		newNeighbors := make([]*Actor, 0)
+		newNeighbors := make([]Actor, 0)
 		for i := range a.neighbors[:index] {
 			newNeighbors = append(newNeighbors, a.neighbors[:index][i])
 		}
@@ -165,35 +171,43 @@ func (a *Actor) RemoveNeighbor(b *Actor) {
 		a.neighbors = newNeighbors
 	}
 }
+func (a *ActorBase) GetNeighbors() ([]Actor) {
+	return a.neighbors
+}
 
 type Ant struct {
-	Actor
-	legCount	int
+	ActorBase
+	legs	int
 }
 func MakeAnt(x, y float64) (a Ant) {
-	a.InitAnt(x, y)
+	a.initAnt(x, y)
 	return a
 }
-func (a *Ant) InitAnt(x, y float64) {
-	a.InitActor(x, y)
-	a.legCount = 6
+func (a *Ant) initAnt(x, y float64) {
+	a.initActor(x, y)
+	a.legs = 6
 }
+
 func main() {
 	// Test Distance and Movement
 	a := MakeActor(10, 10)
 	b := MakeActor(20, 10)
 	c := MakeAnt(30, 10)
 	d := MakeActor(40, 10)
-	fmt.Println(a.Dist(&b))
+	fmt.Println(a.GetX())
+	// fmt.Println((&a).Dist(&b))
 	a.Move(5, 0)
 	b.MoveTo(15, 20)
+	fmt.Println(c)
+	fmt.Println(c.legs)
+	fmt.Println(d)
 	fmt.Println(a.Dist(&b))
 
 	// Test Neightbor Adding and Removing
 	a.AddNeighbor(&b)
 	a.AddNeighbor(&c)
 	a.AddNeighbor(&d)
-	fmt.Println(len(a.neighbors))
+	fmt.Println(len(a.GetNeighbors()))
 	a.RemoveNeighbor(&c)
-	fmt.Println(len(a.neighbors))
+	fmt.Println(len(a.GetNeighbors()))
 }
