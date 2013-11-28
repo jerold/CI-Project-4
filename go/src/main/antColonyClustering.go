@@ -13,61 +13,69 @@ import (
 //Assistance Methods
 
 func addNeighborsToCluster(vector []float64, cluster [][][]float64) {
-	
+
 }
 
 //Environment Classes
 
 type Cluster struct {
-	Clusters [][][]float64
-	OutLayers [][]float64
+	Clusters    [][][]float64
+	OutLayers   [][]float64
 	HasClusters bool
-	Packets []quadTree.Actor
+	Packets     []Packet
 }
 
 type Packet struct {
-	Position {quadTree.Actor quadTree.Actor{}}
-	Packets []float64
-	BaseVariance float64
+	Position      quadTree.Point2D
+	Packets       []Packet
+	BaseVariance  float64
+	Pattern       []Pattern
+	InHand        bool
+	hasMembership bool
 }
 
 type Pheromone struct {
-	Pheromones []quadTree.Actor
+	Pheromones []Pheromone
 }
 
 type Ant struct {
-	ants = []quadTree.Actor
+	Ants []Ant
 }
 
 type Colony struct {
-	
+	Packets []Packet
 }
 
-func (c *Cluster) count (int) {
-	return len(c.Packets)
+func (c *Cluster) count(temp int) {
+	temp = len(c.Packets)
+	return
 }
 
-func (c *Cluster) percentage (float64) {
-	temp := float64(len(c.Packets))/float64(len(Packet.Packets))*100.0
+func (c *Cluster) percentage(p *Packet) (temp float64) {
+	temp = float64(len(c.Packets)) / float64(len(p.Packets)) * 100.0
+	return
 }
 
-func (c *Cluster) variance() ([]float64){
+func (c *Cluster) variance() []float64 {
 	if len(c.Packets) == 0 {
 		return make([]float64, 0)
 	}
-	return vectorOperations.FindVariance(c.Packets, vectorOperations.FindMean(c.Clusters[0]))
+	return vectorOperations.FindVariance(c.Clusters[0], vectorOperations.FindMean(c.Clusters[0]))
 }
 
-func (c *Cluster) types {
+func (c *Cluster) types() {
 	//do nothing for now
 	c.Clusters = make([][][]float64, 0)
 }
 
-func (c *Cluster) reset {
+func (c *Cluster) reset() {
 	c.Clusters = make([][][]float64, 0)
-	c.Outlayers = make([][]float64, 0)
+	c.OutLayers = make([][]float64, 0)
 	c.HasClusters = false
 }
 
-func (p *Packet) update {
-	point := &quadTree.Point{p.Position.x, p.Position.y}
+func (p *Packet) update() {
+	point := &quadTree.Point{p.Position.GetX(), p.Position.GetY(), 0}
+	point.Z = 0
+
+}

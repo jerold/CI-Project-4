@@ -19,9 +19,9 @@ type Point2D interface {
 	Dist(p Point2D) float64
 }
 type Point struct {
-	x float64
-	y float64
-	z float64
+	X float64
+	Y float64
+	Z float64
 }
 
 func MakePoint(x, y float64) (p Point) { // Public Function \\
@@ -29,22 +29,22 @@ func MakePoint(x, y float64) (p Point) { // Public Function \\
 	return p
 }
 func (p *Point) initPoint(x, y float64) {
-	p.x = x
-	p.y = y
+	p.X = x
+	p.Y = y
 }
 func (p *Point) GetX() float64 { // Public Function \\
-	return p.x
+	return p.X
 }
 func (p *Point) GetY() float64 { // Public Function \\
-	return p.y
+	return p.Y
 }
 func (p *Point) Move(dx, dy float64) { // Public Function \\
-	p.x += dx
-	p.y += dy
+	p.X += dx
+	p.Y += dy
 }
 func (p *Point) MoveTo(x, y float64) { // Public Function \\
-	p.x = x
-	p.y = y
+	p.X = x
+	p.Y = y
 }
 func (p *Point) Dist(q Point2D) float64 { // Public Function \\
 	return math.Sqrt((math.Pow(p.GetX()-q.GetX(), 2) + math.Pow(p.GetY()-q.GetY(), 2)))
@@ -82,7 +82,7 @@ func MakeQuad(minPoint Point, maxPoint Point, currentDepth int) (q QuadTree) { /
 
 	q.minPoint = minPoint
 	q.maxPoint = maxPoint
-	q.center = MakePoint((minPoint.x+maxPoint.x)/2, (minPoint.y+maxPoint.y)/2)
+	q.center = MakePoint((minPoint.X+maxPoint.X)/2, (minPoint.Y+maxPoint.Y)/2)
 
 	q.clearChildren()
 	q.hasChildren = false
@@ -101,18 +101,18 @@ func (q *QuadTree) fileActor(a Actor, doAdd bool) {
 func (q *QuadTree) fileActorAtPosition(a Actor, p Point, doAdd bool) {
 	for x := 0; x < 2; x++ {
 		if x == 0 {
-			if p.GetX()-a.GetVisualRange() > q.center.x {
+			if p.GetX()-a.GetVisualRange() > q.center.X {
 				continue
 			}
-		} else if p.GetX()+a.GetVisualRange() < q.center.x {
+		} else if p.GetX()+a.GetVisualRange() < q.center.X {
 			continue
 		}
 		for y := 0; y < 2; y++ {
 			if y == 0 {
-				if p.GetY()-a.GetVisualRange() > q.center.y {
+				if p.GetY()-a.GetVisualRange() > q.center.Y {
 					continue
 				}
-			} else if p.GetY()+a.GetVisualRange() < q.center.y {
+			} else if p.GetY()+a.GetVisualRange() < q.center.Y {
 				continue
 			}
 			if doAdd {
@@ -236,19 +236,19 @@ func (q *QuadTree) haveChildren() {
 	q.clearChildren()
 	for x := 0; x < 2; x++ {
 		if x == 0 {
-			childMin.x = q.minPoint.x
-			childMax.x = q.center.x
+			childMin.X = q.minPoint.X
+			childMax.X = q.center.X
 		} else {
-			childMin.x = q.center.x
-			childMax.y = q.maxPoint.x
+			childMin.X = q.center.X
+			childMax.Y = q.maxPoint.X
 		}
 		for y := 0; y < 2; y++ {
 			if x == 0 {
-				childMin.y = q.minPoint.y
-				childMax.y = q.center.y
+				childMin.Y = q.minPoint.Y
+				childMax.Y = q.center.Y
 			} else {
-				childMin.y = q.center.y
-				childMax.y = q.maxPoint.y
+				childMin.Y = q.center.Y
+				childMax.Y = q.maxPoint.Y
 			}
 			newChild := MakeQuad(childMin, childMax, q.depth+1)
 			q.children = append(q.children, newChild)
@@ -370,18 +370,18 @@ func (a *ActorBase) moved(p Point) {}
 // Old position is used to help the Quad Tree chech it's pre-movement state for differences
 func (a *ActorBase) Move(dx, dy float64) { // Public Function \\
 	previousPoint := a.GetPoint()
-	a.x += dx
-	a.y += dy
+	a.X += dx
+	a.Y += dy
 
-	if a.x > a.xMax {
-		a.x -= a.xMax
-	} else if a.x < 0 {
-		a.x += a.xMax
+	if a.X > a.xMax {
+		a.X -= a.xMax
+	} else if a.X < 0 {
+		a.X += a.xMax
 	}
-	if a.y > a.yMax {
-		a.y -= a.yMax
-	} else if a.y < 0 {
-		a.y += a.xMax
+	if a.Y > a.yMax {
+		a.Y -= a.yMax
+	} else if a.Y < 0 {
+		a.Y += a.xMax
 	}
 
 	qt.ActorMoved(a, previousPoint)
@@ -391,13 +391,13 @@ func (a *ActorBase) Move(dx, dy float64) { // Public Function \\
 // Instead of moving by some delta, we move to a specific point
 func (a *ActorBase) MoveTo(x, y float64) { // Public Function \\
 	previousPoint := a.GetPoint()
-	a.x = x
-	a.y = y
+	a.X = x
+	a.Y = y
 	qt.ActorMoved(a, previousPoint)
 	a.moved(previousPoint)
 }
 func (a *ActorBase) GetPoint() Point { // Public Function \\
-	return MakePoint(a.x, a.y)
+	return MakePoint(a.X, a.Y)
 }
 func (a *ActorBase) GetID() int { // Public Function \\
 	return a.id
@@ -497,7 +497,7 @@ func main() {
 	}
 	for i := 0; i < 20; i++ {
 		a.Move(rand.Float64()*30, rand.Float64()*30)
-		fmt.Println(a.x, a.y, (&a).Dist(&b))
+		fmt.Println(a.X, a.Y, (&a).Dist(&b))
 		qt.PrintQT()
 	}
 }
