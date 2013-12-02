@@ -43,8 +43,11 @@ func main() {
 //euclidean distance between two vectors. they must be the same length or this panics
 func calcDistance(v []float64, c []float64) (dist float64) {
 	dist = 0.0
+	j := len(v)
 	for i := range v {
-		dist += math.Pow((v[i] - c[i]), 2)
+		if i < j {
+			dist += math.Pow((v[i] - c[i]), 2)
+		}
 	}
 	dist = math.Sqrt(dist)
 	return
