@@ -16,7 +16,7 @@ func main() {
 		//patterns[i] = append(patterns[i], item.T)
 	}
 	//fmt.Println(trainIndex)
-	clusters, centers := kmeans(vectorOperations.GetNumClasses(targets)+1, patterns)
+	clusters, centers := kmeans(vectorOperations.GetNumClasses(targets), patterns)
 	fmt.Println("CENTERS:")
 	for j := range centers {
 		fmt.Println(centers[j])
@@ -29,7 +29,7 @@ func main() {
 		fmt.Println("The variance of this cluster is", vectorOperations.FindVariance(clusters[k], vectorOperations.FindMean(clusters[k])))
 		//fmt.Println(clusters[k])
 		for i := k + 1; i < len(clusters); i++ {
-			kMeansDist[i-1] = vectorOperations.CalcDistance(vectorOperations.FindMean(clusters[i]), vectorOperations.FindMean(clusters[k]))
+			kMeansDist[i-1] = vectorOperations.CalcDistance(vectorOperations.FindMean(clusters[k]), vectorOperations.FindMean(clusters[i]))
 		}
 	}
 	fmt.Println("The distance between clusters is", kMeansDist)
@@ -50,7 +50,7 @@ func main() {
 	}
 
 	//var lClusters [][][]float64 = make([][][]float64, vectorOperations.GetNumClasses(targets))
-	var lClusters [][][]float64 = make([][][]float64, 4)
+	var lClusters [][][]float64 = make([][][]float64, 3)
 	for i := range lClusters {
 		lClusters[i] = make([][]float64, 0)
 	}

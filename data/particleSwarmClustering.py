@@ -15,7 +15,7 @@ class Particle(Actor):
         self.carrying = None
         self.packetInHand = Packet
         self.mostSimilarPacketSeen = Packet
-        self.velocity = []
+        self.velocity = [Point(1, 1), np.radians(random.randrange(0, 360))]
         self.personalBest = None
         self.globalBest = Packet
         self.neighborHoodBest = Packet
@@ -24,13 +24,8 @@ class Particle(Actor):
     def update(self):
         """Have the particle fly with a new velocity and possibly move a packet around"""
         self.processEnvironment()
-        self.velocity = [1, np.radians(random.randrange(0, 360))]
-        if self.carrying:
-            self.heading = self.calculateNewVelocity()
-            self.packetInHand.move(np.cos(self.heading)*mag, np.sin(self.heading)*mag)
-        else:
-            self.heading = self.angleFromPheromones()
-        self.move(np.cos(self.heading)*mag, np.sin(self.heading)*mag)
+        self.velocity = self.calculateNewVelocity()
+        self.moveTo(self.velocity[0])
 
     def processEnvironment(self):
         """Minimize looping through neighbors by doing all o(n) time work here"""
@@ -64,3 +59,4 @@ class Particle(Actor):
         newVelocity.append(newPosition)
         newDirection /= len(positions)
         newVelocity.append(newDirection % (2 * np.pi))
+        return newVelocity
