@@ -8,7 +8,8 @@ int xMin, xMax, yMin, yMax;
 
 void setup() {
   int windowSize = 500;
-  size(windowSize, windowSize);
+  int edgeWidth = 10;
+  size(windowSize + 2*edgeWidth, windowSize + 2*edgeWidth);
   
   xMin = 99999;
   xMax = 0;
@@ -57,12 +58,12 @@ void setup() {
     
     // Normalize
     for (int i = 0 ; i < partCount; i++) {
-      particles[i].x = (particles[i].x - xMin)*xScale;
-      particles[i].y = (particles[i].y - yMin)*yScale;
+      particles[i].x = (particles[i].x - xMin)*xScale + edgeWidth;
+      particles[i].y = (particles[i].y - yMin)*yScale + edgeWidth;
     }
     for (int i = 0 ; i < patCount; i++) {
-      patterns[i].x = (patterns[i].x - xMin)*xScale;
-      patterns[i].y = (patterns[i].y - yMin)*yScale;
+      patterns[i].x = (patterns[i].x - xMin)*xScale + edgeWidth;
+      patterns[i].y = (patterns[i].y - yMin)*yScale + edgeWidth;
     }
   } 
   finally {

@@ -106,15 +106,15 @@ class Particle:
 		if self.fitness < self.bFitness:
 			self.bx = euclidianCopy(self.x)
 			self.bFitness = self.fitness
-		if self.fitness < Particle.best.fitness:
-			Particle.best = self
+			if self.fitness < Particle.best.fitness:
+				Particle.best = self
 
 	def updatePosition(self):
 		self.updateV()
 		self.updateX()
 
 	def updateV(self):
-		nbx = self.neighborhoodBest()
+		#nbx = self.neighborhoodBest()
 		gbx = self.globalBest()
 		# if self.pIndex == 0:
 		# 	print("VB: " + str(self.v))
@@ -123,19 +123,26 @@ class Particle:
 		# 	print("NX: " + str(nbx))
 		# 	print("GX: " + str(gbx))
 		for i, v in enumerate(self.v):
-			self.v[i] = v + .5*(self.bx[i] - self.x[i]) + .5*(gbx[i] - self.x[i])
-			# self.v[i] = v + .333*(self.bx[i] - self.x[i]) + .333*(nbx[i] - self.x[i]) + .333*(gbx[i] - self.x[i])
+			self.v[i] = .5*v + .3*random.random()*(self.bx[i] - self.x[i]) + .3*random.random()*(gbx[i] - self.x[i])
 
 	def updateX(self):
+		# Effectively turns PSO into K-Means
+		# mPat = patternsMean(self.members)
+		# for i, v in enumerate(self.x):
+		# 	self.x[i] = mPat[i]
+
+		# Basid position update
 		for i, v in enumerate(self.x):
 			self.x[i] = v + self.v[i]
+
 		# if self.pIndex == 0:
-		# 	print("XA: " + str(self.x))
+		# 	print("F: " + str(self.fitness))
 		# 	print("VA: " + str(self.v))
+		# 	print("XA: " + str(self.x))
 
 
 	def neighborhoodBest(self):
-		neighborCount = 4
+		neighborCount = 2
 		best = Particle.particles[0]
 		for particle in Particle.particles[self.pIndex:(self.pIndex+neighborCount)%len(Particle.particles)]:
 			if particle.fitness < best:
@@ -183,11 +190,6 @@ class Swarm:
 			pattern['m'] = particleIndex
 			self.particles[particleIndex].members.append(pattern)
 			self.particles[particleIndex].memberDistances.append(distances[particleIndex])
-		with open('psoPlotter/psoMembers.csv', 'w') as file:
-			file.write(	str(len(self.particles)) + "," + 
-						",".join(str(p.x[0])+","+str(p.x[1]) for p in self.particles) + "," + 
-						str(len(self.patterns)) + "," + 
-						",".join(str(p['p'][0])+","+str(p['p'][1])+","+str(p['m']) for p in self.patterns) + "\n")
 
 	def updateParticles(self):
 		for particle in self.particles:
@@ -222,8 +224,8 @@ if __name__=="__main__":
 	#				 'data/ionosphere/ionosphere.json']
 
 	# Single:
-	allDataTypes = ['psoTestSet.json']
-	# allDataTypes = ['data/iris/iris.json']
+	# allDataTypes = ['psoTestSet.json']
+	allDataTypes = ['data/iris/iris.json']
 	# allDataTypes = ['data/seeds/seeds.json']
 	# allDataTypes = ['data/glass/glass.json']
 	# allDataTypes = ['data/wine/wine.json']
@@ -239,13 +241,14 @@ if __name__=="__main__":
 		setName = dataSet.split('.')[0].split('/')[-1]
 		print(setName)
 		pSet = PatternSet(dataSet)
-		swarm = Swarm(5, pSet.patterns)
+		swarm = Swarm(4, pSet.patterns)
 		startTime = time.time()
 
 
 		sinceBestChange = 0
 		previousBest = 9999.9
-		while sinceBestChange < 10:
+		# while sinceBestChange > -1:
+		for _ in range(500):
 			swarm.updateMembers()
 			bestDelta = previousBest - sum(p.bFitness for p in Particle.particles)
 			previousBest = sum(p.bFitness for p in Particle.particles)
@@ -258,5 +261,12 @@ if __name__=="__main__":
 
 		endTime = time.time()
 		print("Run Time: [" + str(round(endTime-startTime, 2)) + " sec]")
+
+		with open('psoPlotter/psoMembers.csv', 'w') as file:
+			file.write(	str(len(Particle.particles)) + "," + 
+						",".join(str(p.bx[0])+","+str(p.bx[1]) for p in Particle.particles) + "," + 
+						str(len(swarm.patterns)) + "," + 
+						",".join(str(p['p'][0])+","+str(p['p'][1])+","+str(p['m']) for p in swarm.patterns) + "\n")
+
 
 	print("Done!")
