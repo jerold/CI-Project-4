@@ -6,24 +6,27 @@ Point3D[][] particlePositions;
 Point3D[] patternPositions;
 int[][] patternMembership;
 
-int xMin, xMax, yMin, yMax, frames;
+float xMin, xMax, yMin, yMax;
+int frames;
 
 void setup() {
-  int windowSize = 500;
+  int windowSize = 200;
   int edgeWidth = 10;
   size(windowSize + 2*edgeWidth, windowSize + 2*edgeWidth);
   
-  xMin = 99999;
-  xMax = 0;
-  yMin = 99999;
-  yMax = 0;
+  xMin = 99999.9;
+  xMax = 0.0;
+  yMin = 99999.9;
+  yMax = 0.0;
  
   try {
     String lines[] = loadStrings("psoMembers.csv");
     println("there are " + lines.length + " lines");
     float[] numbers = float(split(lines[0], ','));
-    frames = split(lines[10], ',').length/2; // x and y values so divide this by 2
-    println(frames);
+    frames = 0;
+    if (lines.length > 1)
+      frames = split(lines[10], ',').length/2; // x and y values so divide this by 2
+    println("Frames: " + frames);
     
     // Initialize all of the particles and patterns
     int partCount = int(numbers[0]);
@@ -32,21 +35,33 @@ void setup() {
     particleBests = new Point3D[partCount];
     particlePositions = new Point3D[partCount][frames];
     for (int i = 0 ; i < partCount; i++) {
-      particleBests[i] = new Point3D(numbers[i*partLength+partStart], numbers[i*partLength+partStart+1], 0);
+      Point3D p = new Point3D(numbers[i*partLength+partStart], numbers[i*partLength+partStart+1], 0);
+      particleBests[i] = p;
       
-      float[] positionNumbers = float(split(lines[i+1], ','));
-      for (int j = 0 ; j < frames; j++) {
-        Point3D p = new Point3D(positionNumbers[j*2], positionNumbers[j*2+1], 0);
-        particlePositions[i][j] = p;
-
-        if (p.x > xMax)
-          xMax = int(p.x + 0.5);
-        if (p.x < xMin)
-          xMin = int(p.x - 0.5);
-        if (p.y > yMax)
-          yMax = int(p.y + 0.5);
-        if (p.y < yMin)
-          yMin = int(p.y - 0.5);
+      if (p.x > xMax)
+        xMax = p.x;
+      if (p.x < xMin)
+        xMin = p.x;
+      if (p.y > yMax)
+        yMax = p.y;
+      if (p.y < yMin)
+        yMin = p.y;
+      
+      if (frames > 0) {
+        float[] positionNumbers = float(split(lines[i+1], ','));
+        for (int j = 0 ; j < frames; j++) {
+          p = new Point3D(positionNumbers[j*2], positionNumbers[j*2+1], 0);
+          particlePositions[i][j] = p;
+  
+          if (p.x > xMax)
+            xMax = p.x;
+          if (p.x < xMin)
+            xMin = p.x;
+          if (p.y > yMax)
+            yMax = p.y;
+          if (p.y < yMin)
+            yMin = p.y;
+        }
       }
     }
     
@@ -56,20 +71,24 @@ void setup() {
     patternPositions = new Point3D[patCount];
     patternMembership = new int[patCount][frames];
     for (int i = 0 ; i < patCount; i++) {
-      patternPositions[i] = new Point3D(numbers[i*patLength+patStart], numbers[i*patLength+patStart+1], numbers[i*patLength+patStart+2]);
-      if (numbers[i*patLength+patStart] > xMax)
-        xMax = int(numbers[i*patLength+patStart] + 0.5);
-      if (numbers[i*patLength+patStart] < xMin)
-        xMin = int(numbers[i*patLength+patStart] - 0.5);
-      if (numbers[i*patLength+patStart+1] > yMax)
-        yMax = int(numbers[i*patLength+patStart+1] + 0.5);
-      if (numbers[i*patLength+patStart+1] < yMin)
-        yMin = int(numbers[i*patLength+patStart+1] - 0.5);
+      Point3D p = new Point3D(numbers[i*patLength+patStart], numbers[i*patLength+patStart+1], numbers[i*patLength+patStart+2]);
+      patternPositions[i] = p;
+      
+      if (p.x > xMax)
+        xMax = p.x;
+      if (p.x < xMin)
+        xMin = p.x;
+      if (p.y > yMax)
+        yMax = p.y;
+      if (p.y < yMin)
+        yMin = p.y;
 
-      float[] membershipNumbers = float(split(lines[partCount+i+1], ','));
-      for (int j = 0 ; j < frames; j++) {
-        patternMembership[i][j] = int(membershipNumbers[j]);
-      }  
+      if (frames > 0) {
+        float[] membershipNumbers = float(split(lines[partCount+i+1], ','));
+        for (int j = 0 ; j < frames; j++) {
+          patternMembership[i][j] = int(membershipNumbers[j]);
+        }
+      }
     }
     
     float xScale = float(windowSize)/(xMax - xMin);
@@ -97,34 +116,48 @@ void setup() {
 }
 
 void draw() {
-  background(40);
+//  background(40);
+  background(255);
   
   fill(0, 0);
-  stroke(120, 180, 150, 150);
+//  stroke(120, 180, 150, 150);
+  stroke(0, 150);
   strokeWeight(2);
   for (int i = 0 ; i < particleBests.length; i++) {
     Point3D p = particleBests[i];
-    ellipse(p.x, p.y, 10, 10);
+    ellipse(p.x, p.y, 14, 14);
   }
-  stroke(180, 180, 180, 150);
-  for (int i = 0 ; i < particlePositions.length; i++) {
-    Point3D p = particlePositions[i][0];
-    ellipse(p.x, p.y, 10, 10);
+  if (frames > 0) {
+//    stroke(180, 180, 180, 150);
+    stroke(0, 150);
+    for (int i = 0 ; i < particlePositions.length; i++) {
+      Point3D p = particlePositions[i][0];
+      ellipse(p.x, p.y, 6, 6);
+    }
+//    stroke(180, 120, 150, 150);
+    stroke(0, 150);
+    for (int i = 0 ; i < particlePositions.length; i++) {
+      Point3D p = particlePositions[i][frameCount%frames];
+      ellipse(p.x, p.y, 10, 10);
+    }
   }
-  stroke(180, 120, 150, 150);
-  for (int i = 0 ; i < particlePositions.length; i++) {
-    Point3D p = particlePositions[i][frameCount%frames];
-    ellipse(p.x, p.y, 10, 10);
-  }
-  stroke(120, 150, 180, 150);
   for (int i = 0 ; i < patternPositions.length; i++) {
     Point3D p = patternPositions[i];
-    Point3D p2 = particlePositions[patternMembership[i][frameCount%frames]][frameCount%frames];
+    Point3D p2 = particleBests[int(p.z)];
+//    stroke(120, 150, 180, 150);
+    stroke(0, 150);
+    if (frames > 0) {
+//      stroke(120+50*patternMembership[i][frameCount%frames], 255-150*patternMembership[i][frameCount%frames], 50+180/(1+(2*patternMembership[i][frameCount%frames])), 150);
+      p2 = particlePositions[patternMembership[i][frameCount%frames]][frameCount%frames];
+    }
+    stroke(0, 50);
     ellipse(p.x, p.y, 4, 4);
     line(p.x, p.y, p2.x, p2.y);
   }
   fill(255);
-  text(frameCount%frames, 20, 20);
+  if (frames > 0)
+    text(frameCount%frames, 10, 20);
+  text(frames, 10, height - 10);
 }
 
 class Point3D {

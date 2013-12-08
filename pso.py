@@ -78,6 +78,7 @@ class Particle:
 		if self.pIndex == 0:
 			Particle.best = self
 		self.bestInterMemberDistance = 9999.9
+		self.iterationsSinceBestUpdate = 0
 
 	def resetMemberInfo(self):
 		self.members = []
@@ -92,7 +93,8 @@ class Particle:
 	def updateFitness(self):
 		# minimize inter cluster distance
 		if len(self.memberDistances) > 0:
-			self.fitness = sum(self.memberDistances)/len(self.memberDistances)
+			self.fitness = sum(self.memberDistances)/len(self.memberDistances)	# Reward for being closer to members
+			# self.fitness = self.fitness + max(self.memberDistances)
 
 			# maxInterMemberDistance = 0
 			# for member1 in self.members:
@@ -105,21 +107,28 @@ class Particle:
 			# self.fitness = self.fitness + maxInterMemberDistance
 			
 			mean = patternsMean(self.members)
+			self.fitness = self.fitness + euclidianDistance(self.x, mean)*2		# Reward for centering on cluster
+
 			sd = patternsStandardDeviation(self.members, mean)
-			# print(mean)
-			# print(sd)
-			intraClusterComponent = sum(sd)/len(sd)
-			interClusterComponent = patternVarience(self.x, mean)
-			# print("Intra:" + str(intraClusterComponent))
-			# print("Inter:" + str(interClusterComponent))
+			self.fitness = self.fitness + sum(sd)								# Reward for cluster tightness
+
+			# intraClusterComponent = sum(sd)/len(sd)
+			# interClusterComponent = patternVarience(self.x, mean)
+			# self.fitness = self.fitness + interClusterComponent
 
 			if self.fitness < self.bFitness:
 				self.bx = euclidianCopy(self.x)
 				self.bFitness = self.fitness
 				if self.bFitness < Particle.best.bFitness:
 					Particle.best = self
+					for p2 in Particle.particles:
+						if p2.pIndex != self.pIndex:
+							p2.bFitness = 9999.9
+				self.iterationsSinceBestUpdate = 0
+			else:
+				self.iterationsSinceBestUpdate = self.iterationsSinceBestUpdate + 1
 		else:
-			self.fitness = 99999.9
+			self.fitness = 9999.9
 
 
 	def updatePosition(self):
@@ -129,6 +138,7 @@ class Particle:
 	def updateV(self):
 		nbx = self.neighborhoodBest()
 		gbx = self.globalBest()
+		anneal = pow(.95, self.iterationsSinceBestUpdate)
 		# if self.pIndex == 0:
 		# 	print("VB: " + str(self.v))
 		# 	print("XB: " + str(self.x))
@@ -136,9 +146,11 @@ class Particle:
 		# 	print("NX: " + str(nbx))
 		# 	print("GX: " + str(gbx))
 		for i, v in enumerate(self.v):
-			self.v[i] = .98*v + .05*(self.bx[i] - self.x[i]) + 0.1*random.random()
+			# self.v[i] = .98*v + .05*(self.bx[i] - self.x[i]) + 0.1*(random.random()-.5)
 			# self.v[i] = v + .05*(self.bx[i] - self.x[i]) + .01*(nbx[i] - self.x[i]) + .01*(gbx[i] - self.x[i])
+			# self.v[i] = v + .05*(self.bx[i] - self.x[i]) + .01*(nbx[i] - self.x[i])
 			# self.v[i] = v + .05*(self.bx[i] - self.x[i]) + .05*(gbx[i] - self.x[i])
+			self.v[i] = .98*v + .05*(self.bx[i] - self.x[i]) + anneal*.001*(gbx[i] - self.x[i]) + anneal*0.1*(random.random()-.5)
 
 	def updateX(self):
 		# Effectively turns PSO into K-Means
@@ -147,8 +159,8 @@ class Particle:
 		# 	self.x[i] = mPat[i]
 
 		# Basid position update
-		for i, v in enumerate(self.x):
-			self.x[i] = v + self.v[i]
+		for i, x in enumerate(self.x):
+			self.x[i] = x + self.v[i]
 		self.hx.append(euclidianCopy(self.x))
 
 		# if self.pIndex == 0:
@@ -200,17 +212,20 @@ class Swarm:
 				if x > Swarm.maxV[i]:
 					Swarm.maxV[i] = x
 		parts = []
-		for _ in range(particleCount):
+		for i in range(particleCount):
 			parts.append(Particle(self.randomPositionInRange()))
 		return parts
 
 	def randomPositionInRange(self):
 		newPattern = emptyCopy(self.patterns[0]['p'])
 		for i, _ in enumerate(newPattern):
-			newPattern[i] = float(random.randrange(int(Swarm.minV[i]*1000), int(Swarm.maxV[i]*1000)))/1000
+			try:
+				newPattern[i] = float(random.randrange(int(Swarm.minV[i]*1000), int(Swarm.maxV[i]*1000)))/1000
+			except ValueError:
+				newPattern[i] = 0.0
 		return newPattern
 
-	def updateMembers(self):
+	def update(self):
 		self.checkProximity()
 		self.updateMembership()
 		self.updateParticles()
@@ -218,7 +233,9 @@ class Swarm:
 	def checkProximity(self):
 		for p1 in self.particles:
 			for p2 in self.particles:
-				if p1.pIndex != p2.pIndex and euclidianDistance(p1.bx, p2.bx) < 1.0:
+				if p1.pIndex != p2.pIndex and euclidianDistance(p1.bx, p2.bx) < 0.5:
+					print("Get out of Here <----------------<<<")
+					p1.bFitness = 9999.9
 					p1.initVelocity(self.randomPositionInRange())
 
 	def updateMembership(self):
@@ -244,6 +261,13 @@ class Swarm:
 		for particle in self.particles:
 			particle.updatePosition()
 
+	def setParticlesToPersonBest(self):
+		for particle in self.particles:
+			for i, x in enumerate(particle.x):
+				particle.v[i] = particle.x[i] - particle.bx[i]
+			particle.updateX()
+
+
 if __name__=="__main__":
 	# Batch: (ordered by least time complex to most)
 	# allDataTypes = ['data/iris/iris.json',
@@ -258,8 +282,8 @@ if __name__=="__main__":
 	#				 'data/ionosphere/ionosphere.json']
 
 	# Single:
-	allDataTypes = ['psoTestSet.json']
-	# allDataTypes = ['data/iris/iris.json']
+	# allDataTypes = ['psoTestSet.json']
+	allDataTypes = ['data/iris/iris.json']
 	# allDataTypes = ['data/seeds/seeds.json']
 	# allDataTypes = ['data/glass/glass.json']
 	# allDataTypes = ['data/wine/wine.json']
@@ -277,23 +301,31 @@ if __name__=="__main__":
 		pSet = PatternSet(dataSet)
 		for pat in pSet.patterns:
 			pat['h'] = []
-		swarm = Swarm(10, pSet.patterns)
+
+
+		motionDelta = 1.0
+		manualStop = False
+		iterations = 0
+		particleNumber = 5
+		minMotionDelta = float(particleNumber*len(pSet.patterns[0]['p']))/10000
+
 		startTime = time.time()
-
-
-		sinceBestChange = 0
-		previousBest = 9999.9
-		# while sinceBestChange < 1000:
-		for i in range(1000):
-			swarm.updateMembers()
-			bestDelta = previousBest - sum(p.bFitness for p in Particle.particles)
-			previousBest = sum(p.bFitness for p in Particle.particles)
-			if abs(bestDelta) < 0.000001:
-				sinceBestChange += 1
-			else:
-				sinceBestChange = 0
-			print(previousBest)
+		swarm = Swarm(particleNumber, pSet.patterns)
+		while motionDelta > minMotionDelta and not manualStop:
+		# for i in range(1000):
+			swarm.update()
+			motionDelta = sum(sum(abs(v) for v in p.v) for p in Particle.particles)
+			iterations = iterations + 1
+			if iterations%500 == 0:
+				print(str(iterations) + " : " + str(round(motionDelta, 4)) + "/" + str(minMotionDelta))
+			if iterations%5000 == 0:
+				val = str(raw_input("Should we Stop (y/n)?  "))
+				if val is "y":
+					manualStop = True
 		# update Velocity
+
+		swarm.setParticlesToPersonBest()
+		swarm.updateMembership()
 
 		endTime = time.time()
 		print("Run Time: [" + str(round(endTime-startTime, 2)) + " sec]")
@@ -303,17 +335,19 @@ if __name__=="__main__":
 						",".join(str(p.bx[0])+","+str(p.bx[1]) for p in Particle.particles) + "," + 
 						str(len(swarm.patterns)) + "," + 
 						",".join(str(p['p'][0])+","+str(p['p'][1])+","+str(p['m']) for p in swarm.patterns) + "\n")
-		with open('psoPlotter/psoMembers.csv', 'a') as file:
-			for part in swarm.particles:
-				file.write(",".join(str(h[0])+","+str(h[1]) for h in part.hx) + "\n")
-			for pat in swarm.patterns:
-				file.write(",".join(str(h) for h in pat['h']) + "\n")
+		if False:
+			with open('psoPlotter/psoMembers.csv', 'a') as file:
+				for part in swarm.particles:
+					file.write(",".join(str(h[0])+","+str(h[1]) for h in part.hx) + "\n")
+				for pat in swarm.patterns:
+					file.write(",".join(str(h) for h in pat['h']) + "\n")
 
         means = []
         deviation = []
         for particle in swarm.particles:
-            means.append(patternsMean(particle.members))
-            deviation.append(patternsStandardDeviation(particle.members, patternsMean(particle.members)))
+        	if len(particle.members) > 0:
+	            means.append(patternsMean(particle.members))
+	            deviation.append(patternsStandardDeviation(particle.members, patternsMean(particle.members)))
         print means, deviation
         for i, mean in enumerate(means):
             for m in means[i+1:]:
