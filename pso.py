@@ -68,6 +68,7 @@ class Particle:
 	def __init__(self, position):
 		self.v = self.initVelocity(position)	# Velocity
 		self.x = euclidianCopy(position)		# Position
+		self.hx = []							# Position History
 		self.fitness = 9999.9					# Fitness
 		self.bx = euclidianCopy(position)		# Best
 		self.bFitness = 9999.9					# Best Fitness
@@ -106,7 +107,7 @@ class Particle:
 		if self.fitness < self.bFitness:
 			self.bx = euclidianCopy(self.x)
 			self.bFitness = self.fitness
-			if self.fitness < Particle.best.fitness:
+			if self.bFitness < Particle.best.bFitness:
 				Particle.best = self
 
 	def updatePosition(self):
@@ -123,7 +124,7 @@ class Particle:
 		# 	print("NX: " + str(nbx))
 		# 	print("GX: " + str(gbx))
 		for i, v in enumerate(self.v):
-			self.v[i] = .5*v + .3*random.random()*(self.bx[i] - self.x[i]) + .3*random.random()*(gbx[i] - self.x[i])
+			self.v[i] = v + .05*(self.bx[i] - self.x[i]) + .05*(gbx[i] - self.x[i])
 
 	def updateX(self):
 		# Effectively turns PSO into K-Means
@@ -134,6 +135,7 @@ class Particle:
 		# Basid position update
 		for i, v in enumerate(self.x):
 			self.x[i] = v + self.v[i]
+		self.hx.append(euclidianCopy(self.x))
 
 		# if self.pIndex == 0:
 		# 	print("F: " + str(self.fitness))
@@ -150,7 +152,7 @@ class Particle:
 		return best.x
 
 	def globalBest(self):
-		return Particle.best.x
+		return Particle.best.bx
 
 	def __str__(self):
 		s = "P[" + ", ".join(str(x) + ":" + str(round(self.v[i], 3)) for i, x in enumerate(self.x)) + "]"
@@ -188,6 +190,7 @@ class Swarm:
 					minDist = distances[-1]
 					particleIndex = i
 			pattern['m'] = particleIndex
+			pattern['h'].append(particleIndex)
 			self.particles[particleIndex].members.append(pattern)
 			self.particles[particleIndex].memberDistances.append(distances[particleIndex])
 
@@ -224,8 +227,8 @@ if __name__=="__main__":
 	#				 'data/ionosphere/ionosphere.json']
 
 	# Single:
-	# allDataTypes = ['psoTestSet.json']
-	allDataTypes = ['data/iris/iris.json']
+	allDataTypes = ['psoTestSet.json']
+	# allDataTypes = ['data/iris/iris.json']
 	# allDataTypes = ['data/seeds/seeds.json']
 	# allDataTypes = ['data/glass/glass.json']
 	# allDataTypes = ['data/wine/wine.json']
@@ -241,14 +244,16 @@ if __name__=="__main__":
 		setName = dataSet.split('.')[0].split('/')[-1]
 		print(setName)
 		pSet = PatternSet(dataSet)
-		swarm = Swarm(3, pSet.patterns)
+		for pat in pSet.patterns:
+			pat['h'] = []
+		swarm = Swarm(4, pSet.patterns)
 		startTime = time.time()
 
 
 		sinceBestChange = 0
 		previousBest = 9999.9
-		# while sinceBestChange > -1:
-		for _ in range(500):
+		# while sinceBestChange < 1000:
+		for _ in range(1000):
 			swarm.updateMembers()
 			bestDelta = previousBest - sum(p.bFitness for p in Particle.particles)
 			previousBest = sum(p.bFitness for p in Particle.particles)
@@ -267,6 +272,12 @@ if __name__=="__main__":
 						",".join(str(p.bx[0])+","+str(p.bx[1]) for p in Particle.particles) + "," + 
 						str(len(swarm.patterns)) + "," + 
 						",".join(str(p['p'][0])+","+str(p['p'][1])+","+str(p['m']) for p in swarm.patterns) + "\n")
+		with open('psoPlotter/psoMembers.csv', 'a') as file:
+			for part in swarm.particles:
+				file.write(",".join(str(h[0])+","+str(h[1]) for h in part.hx) + "\n")
+			for pat in swarm.patterns:
+				file.write(",".join(str(h) for h in pat['h']) + "\n")
+
         means = []
         deviation = []
         for particle in swarm.particles:
