@@ -3,6 +3,7 @@ package vectorOperations
 import (
 	"container/list"
 	"math"
+	"strconv"
 )
 
 //euclidean distance between two vectors. they must be the same length or this panics
@@ -71,30 +72,6 @@ func FindMean(data [][]float64) (mean []float64) {
 	return
 }
 
-//func CompareClusters(correct [][][]float64, clustered [][][]float64) []int {
-//	var done bool = false
-//	count := make([]int, len(correct))
-//	for i := range correct {
-//		for _, v1 := range correct[i] {
-//			for k := range clustered {
-//				for _, v2 := range clustered[k] {
-//					if VectorCompare(v1, v2) {
-//						if i == k {
-//							count[i]++
-//							done = true
-//							break
-//						}
-//					}
-//				}
-//				if done {
-//					break
-//				}
-//			}
-//		}
-//	}
-//	return count
-//}
-
 //function to determine the number of classes based on input classifications
 func GetNumClasses(t []float64) int {
 	classes := list.New()
@@ -126,65 +103,65 @@ func GetNumClasses(t []float64) int {
 	return count
 }
 
-//function to make cluster according to input data
-func MakeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
-	clusters = make([][][]float64, GetNumClasses(t))
-	for i := range clusters {
-		clusters[i] = make([][]float64, 5)
+func ToString(vector []float64) string {
+	var s string
+	s += "["
+	for i, elem := range vector {
+		s += strconv.FormatFloat(elem, 'f', 6, 64)
+		if i == len(vector)-1 {
+			s += "]"
+		} else {
+			s += ", "
+		}
 	}
-	for i, item := range p {
-		clusters[int(t[i])] = append(clusters[int(t[i])], item)
-	}
-	return clusters
+	return s
 }
 
-func MoveClusters(c [][][]float64) [][][]float64 {
-	counts := make([][]int, len(c))
-	for i := range counts {
-		counts[i] = make([]int, len(c))
-	}
-	//for iter := 0; iter < len(c); iter++ {
-	for i := range c {
-		for _, elem := range c[i] {
-			counts[i][int(elem[len(elem)-1])]++
-		}
-	}
-	//fmt.Println(counts)
-	maxs := make([]int, len(c))
-	//class := 0
-	for i := range counts {
-		max := 0
-		class := -1
-		for j, count := range counts[i] {
-			if count > max {
-				max = count
-				class = j
-			}
-		}
-		if maxs[class] == 0 {
-			maxs[class] = max
-		} else if maxs[class] <= max {
-			for k, item := range maxs {
-				if item == 0 {
-					maxs[k] = maxs[class]
-					maxs[class] = max
-				}
-			}
-		}
-	}
-	//fmt.Println(maxs)
-	//for i, elem := maxs {
-	//	for j := range counts {
-	//		for k, item := range counts[j] {
-	//			if elem == item {
-	//				c[j],
-	//			}
-	//		}
-	//	}
-	//}
-	//c[class], c[iter] = c[iter], c[class]
-	//	break
-	//}
-	//}
-	return c
-}
+//function to make cluster according to input data
+//func MakeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
+//	clusters = make([][][]float64, GetNumClasses(t))
+//	for i := range clusters {
+//		clusters[i] = make([][]float64, 5)
+//	}
+//	for i, item := range p {
+//		clusters[int(t[i])] = append(clusters[int(t[i])], item)
+//	}
+//	return clusters
+//}
+
+//func MoveClusters(c [][][]float64) [][][]float64 {
+//	counts := make([][]int, len(c))
+//	for i := range counts {
+//		counts[i] = make([]int, len(c))
+//	}
+//	//for iter := 0; iter < len(c); iter++ {
+//	for i := range c {
+//		for _, elem := range c[i] {
+//			counts[i][int(elem[len(elem)-1])]++
+//		}
+//	}
+//	//fmt.Println(counts)
+//	maxs := make([]int, len(c))
+//	//class := 0
+//	for i := range counts {
+//		max := 0
+//		class := -1
+//		for j, count := range counts[i] {
+//			if count > max {
+//				max = count
+//				class = j
+//			}
+//		}
+//		if maxs[class] == 0 {
+//			maxs[class] = max
+//		} else if maxs[class] <= max {
+//			for k, item := range maxs {
+//				if item == 0 {
+//					maxs[k] = maxs[class]
+//					maxs[class] = max
+//				}
+//			}
+//		}
+//	}
+//	return c
+//}
