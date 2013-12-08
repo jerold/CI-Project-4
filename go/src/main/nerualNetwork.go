@@ -6,7 +6,7 @@ import (
 	"vectorOperations"
 )
 
-var learningRate float64 = 0.5
+var learningRate float64 = 1
 
 type Neuron struct {
 	Weights []float64
@@ -47,7 +47,7 @@ func (net *Network) printNet() {
 }
 
 func (net *Network) compete(vector []float64) (winner int) {
-	var max float64 = -1.0
+	var min float64 = 1 << 63
 	winner = 0
 	for i, n := range net.Net[1].Layer {
 		var sum float64 = 0.0
@@ -55,8 +55,8 @@ func (net *Network) compete(vector []float64) (winner int) {
 		//	sum += n.Weights[j] * vector[i]
 		//}
 		sum = vectorOperations.CalcDistance(n.Weights, vector)
-		if sum > max {
-			max = sum
+		if sum < min {
+			min = sum
 			winner = i
 		}
 	}

@@ -7,7 +7,7 @@ import (
 )
 
 type Pattern struct {
-	T float64
+	//T float64
 	P []float64
 }
 
