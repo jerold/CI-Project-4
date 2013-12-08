@@ -106,6 +106,11 @@ void draw() {
     Point3D p = particleBests[i];
     ellipse(p.x, p.y, 10, 10);
   }
+  stroke(180, 180, 180, 150);
+  for (int i = 0 ; i < particlePositions.length; i++) {
+    Point3D p = particlePositions[i][0];
+    ellipse(p.x, p.y, 10, 10);
+  }
   stroke(180, 120, 150, 150);
   for (int i = 0 ; i < particlePositions.length; i++) {
     Point3D p = particlePositions[i][frameCount%frames];
@@ -116,7 +121,7 @@ void draw() {
     Point3D p = patternPositions[i];
     Point3D p2 = particlePositions[patternMembership[i][frameCount%frames]][frameCount%frames];
     ellipse(p.x, p.y, 4, 4);
-//    line(p.x, p.y, p2.x, p2.y);
+    line(p.x, p.y, p2.x, p2.y);
   }
   fill(255);
   text(frameCount%frames, 20, 20);
