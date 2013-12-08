@@ -86,7 +86,7 @@ void draw() {
     Point3D p = patterns[i];
     Point3D p2 = particles[int(p.z)];
     ellipse(p.x, p.y, 4, 4);
-    line(p.x, p.y, p2.x, p2.y);
+//    line(p.x, p.y, p2.x, p2.y);
   }
   
 }
