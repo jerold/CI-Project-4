@@ -309,5 +309,14 @@ if __name__=="__main__":
 			for pat in swarm.patterns:
 				file.write(",".join(str(h) for h in pat['h']) + "\n")
 
+        means = []
+        deviation = []
+        for particle in swarm.particles:
+            means.append(patternsMean(particle.members))
+            deviation.append(patternsStandardDeviation(particle.members, patternsMean(particle.members)))
+        print means, deviation
+        for i, mean in enumerate(means):
+            for m in means[i+1:]:
+                print euclidianDistance(mean, m)
 
 	print("Done!")
