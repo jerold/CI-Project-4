@@ -241,7 +241,7 @@ if __name__=="__main__":
 		setName = dataSet.split('.')[0].split('/')[-1]
 		print(setName)
 		pSet = PatternSet(dataSet)
-		swarm = Swarm(4, pSet.patterns)
+		swarm = Swarm(3, pSet.patterns)
 		startTime = time.time()
 
 
@@ -267,6 +267,14 @@ if __name__=="__main__":
 						",".join(str(p.bx[0])+","+str(p.bx[1]) for p in Particle.particles) + "," + 
 						str(len(swarm.patterns)) + "," + 
 						",".join(str(p['p'][0])+","+str(p['p'][1])+","+str(p['m']) for p in swarm.patterns) + "\n")
-
+        means = []
+        deviation = []
+        for particle in swarm.particles:
+            means.append(patternsMean(particle.members))
+            deviation.append(patternsStandardDeviation(particle.members, patternsMean(particle.members)))
+        print means, deviation
+        for i, mean in enumerate(means):
+            for m in means[i+1:]:
+                print euclidianDistance(mean, m)
 
 	print("Done!")
