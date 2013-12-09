@@ -1,14 +1,60 @@
 from QuadTree import Point
 from QuadTree import Actor
+from QuadTree import QuadTree
+
 import time
 import random
+import math
 import numpy as np
 import matplotlib.pyplot as plt
 from patternSet import PatternSet
-from clustering import Packet, varience, averageVarience
+from clustering import Cluster, Packet, varience, averageVarience
 
 
 
+### Helper Methods ####################################################################################
+#######################################################################################################
+
+def emptyCopy(p):
+	"""Create an empty Vector of the same dimensionality as that of the input vector"""
+	c = []
+	for i in p:
+		c.append(0.0)
+	return c
+
+def patternsMean(patterns):
+	"""Find the Average value of each element across all of the input patterns assembling and returning a mean pattern"""
+	mean = emptyCopy(patterns[0]['p'])
+	for pattern in patterns:
+		for i, v in enumerate(pattern['p']):
+			mean[i] = mean[i] + v
+	for i, v in enumerate(mean):
+		mean[i] = v/len(patterns)
+	return mean
+
+def patternVarience(p, q):
+	"""Combined difference between two vectors"""
+	var = 0.0
+	for i in range(len(p)):
+		var = var + (p[i] - q[i])*(p[i] - q[i])
+	return var
+
+def patternsStandardDeviation(patterns, mean):
+	"""Standard Deviation vector of the same dimensionality as the patterns and their mean"""
+	varience = emptyCopy(mean)
+	for pattern in patterns:
+		for j, item in enumerate(pattern['p']):
+			varience[j] += pow(item - mean[j], 2)
+	for i, v in enumerate(varience):
+		varience[i] = math.sqrt(varience[i] / len(patterns))
+	return varience
+
+def euclidianDistance(p, q):
+	"""Distance function in multi-dimensional space"""
+	sumOfSquares = 0.0
+	for i in range(len(p)):
+		sumOfSquares = sumOfSquares + ((p[i]-q[i])*(p[i]-q[i]))
+	return math.sqrt(sumOfSquares)
 
 
 
@@ -210,6 +256,7 @@ class Colony:
 		Pheromone.pheromones = []
 		Ant.ants = []
 		Actor.actorIdInc = 0
+		Actor.quadTree = QuadTree(Point(0.0, 0.0), Point(100, 100), 0)
 
 		for pattern in patterns:
 			Packet(pattern, Point(random.randrange(0, 100), random.randrange(0, 100)))
@@ -241,18 +288,21 @@ class Colony:
 if __name__=="__main__":
 	# Batch: (ordered by least time complex to most)
 	# allDataTypes = ['data/iris/iris.json',
-	#				 'data/seeds/seeds.json',
-	#				 'data/glass/glass.json',
-	#				 'data/wine/wine.json',
-	#				 'data/zoo/zoo.json',
-	#				 'data/heart/heart.json',
-	#				 'data/car/car.json',
-	#				 'data/yeast/yeast.json',
-	#				 'data/block/pageblocks.json',
-	#				 'data/ionosphere/ionosphere.json']
+	# 				 'data/seeds/seeds.json',
+	# 				 'data/glass/glass.json',
+	# 				 'data/wine/wine.json',
+	# 				 'data/zoo/zoo.json',
+	# 				 'data/heart/heart.json',
+	# 				 'data/car/car.json',
+	# 				 'data/yeast/yeast.json',
+	# 				 'data/block/pageblocks.json',
+	# 				 'data/ionosphere/ionosphere.json',
+	# 				 'data/pendigits/pendigits.json',
+	# 				 'data/flare/flare.json',
+	# 				 'data/letter/letter-recognition.json']
 
 	# Single:
-	allDataTypes = ['data/iris/iris.json']
+	# allDataTypes = ['data/iris/iris.json']
 	# allDataTypes = ['data/seeds/seeds.json']
 	# allDataTypes = ['data/glass/glass.json']
 	# allDataTypes = ['data/wine/wine.json']
@@ -263,44 +313,63 @@ if __name__=="__main__":
 	# allDataTypes = ['data/block/pageblocks.json']
 	# allDataTypes = ['data/ionosphere/ionosphere.json']
 
+	# allDataTypes = ['data/pendigits/pendigits.json']
+	# allDataTypes = ['data/flare/flare.json']
+	allDataTypes = ['data/letter/letter-recognition.json']
+
 	runsPerDataSet = 1 #10
 	for dataSet in allDataTypes:
-		for run in range(runsPerDataSet):
-			setName = dataSet.split('.')[0].split('/')[-1]
-			print(setName)
-			pSet = PatternSet(dataSet)
-			colony = Colony(5, pSet.patterns)
+		setName = dataSet.split('.')[0].split('/')[-1]
+		print(setName)
+		pSet = PatternSet(dataSet)
+		colony = Colony(5, pSet.patterns)
 
-			# Run Simulation
-			iterations = 90000
-			startTime = time.time()
-			for i in range(iterations):
-				colony.update()
-				if i%100 == 0:
-					print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "]")
-					Packet.clusterStats(setName)
-			endTime = time.time()
-			print("Run Time: [" + str(round(endTime-startTime, 2)) + " sec]")
+		# Run Simulation
+		iterations = 25000
+		startTime = time.time()
+		for i in range(iterations):
+			colony.update()
+			if i%100 == 0:
+				print("Move: " + str(i) + ", HPD[" + str(Ant.ants[0].highestPacketDensitySeen) + "]")
+				Packet.clusterStats(setName)
+		endTime = time.time()
+		print("Run Time: [" + str(round(endTime-startTime, 2)) + " sec]")
 
-	print("Data Set: " + setName)
-	print("Packets:" + str(len(Packet.packets)))
-	print("Ants:" + str(len(Ant.ants)))
-	print("Pheromones:" + str(len(Pheromone.pheromones)))
+		with open('records/antResults.txt', 'a') as file:
+			file.write('\n\nNUMBER OF CLUSTERS: ' + str(len(Cluster.clusters)) + '\n')
+			file.write('CURRENT DATA SET: ' + str(setName) + '\n')
+			file.write('================PARTICLE SWARM================\n')
+			for i, c1 in enumerate(Cluster.clusters):
+				file.write('CLUSTER:' + str(i) + '\n')
+				file.write('Cluster contains ' + str(float(len(c1.packets))/len(pSet.patterns)) + ' percent of the data\n')
+				mean1 = patternsMean(list(p.pattern for p in c1.packets))
+				file.write('Cluster mean is ' + str(mean1) + '\n')
+				file.write('Cluster standard deviation is ' + str(patternsStandardDeviation(list(p.pattern for p in c1.packets), mean1)) + '\n')
+				for j, c2 in enumerate(Cluster.clusters):
+					if j > i:
+						mean2 = patternsMean(list(p.pattern for p in c2.packets))
+						file.write('The distance between this cluster and cluster ' + str(j) + ' is ' + str(euclidianDistance(mean1, mean2)) + '\n')
 
-	# Create Recording
-	with open('antAnimator/antMotion.csv', 'w') as file:
-		for p in Packet.packets:
-			file.write(",".join(str(ph.x)+","+str(ph.y)+","+str(p.rangeOfVision) for ph in p.moveHistory)+"\n")
-		# for a in Ant.ants:
-		# 	file.write(",".join(str(ah.x)+","+str(ah.y)+","+str(a.rangeOfVision) for ah in a.moveHistory)+"\n")
-		# for f in Pheromone.pheromones:
-		# 	file.write(",".join(str(f.position.x)+","+str(f.position.y)+","+str(fc/3) for fc in f.cHistory)+"\n")
+		print("Data Set: " + setName)
+		print("Packets:" + str(len(Packet.packets)))
+		print("Ants:" + str(len(Ant.ants)))
+		print("Pheromones:" + str(len(Pheromone.pheromones)))
+
+		# Create Recording
+		# with open('antAnimator/'+setName+'AntMotion.csv', 'w') as file:
+		# 	for p in Packet.packets:
+		# 		file.write(",".join(str(ph.x)+","+str(ph.y)+","+str(p.rangeOfVision) for ph in p.moveHistory)+"\n")
+
+			# for a in Ant.ants:
+			# 	file.write(",".join(str(ah.x)+","+str(ah.y)+","+str(a.rangeOfVision) for ah in a.moveHistory)+"\n")
+			# for f in Pheromone.pheromones:
+			# 	file.write(",".join(str(f.position.x)+","+str(f.position.y)+","+str(fc/3) for fc in f.cHistory)+"\n")
 
 
 	# Plot
-	x = [p.position.x for p in Packet.packets]
-	y = [p.position.y for p in Packet.packets]
-	area = [2.0 for p in Packet.packets]
+	# x = [p.position.x for p in Packet.packets]
+	# y = [p.position.y for p in Packet.packets]
+	# area = [2.0 for p in Packet.packets]
 	# alph = [.5 for p in Packet.packets]
 
 	# x = x + [p.position.x for p in Pheromone.pheromones]

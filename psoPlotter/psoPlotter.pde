@@ -6,11 +6,11 @@ Point3D[][] particlePositions;
 Point3D[] patternPositions;
 int[][] patternMembership;
 
-float xMin, xMax, yMin, yMax;
+float xMin, xMax, yMin, yMax, xCenter, yCenter;
 int frames;
 
 void setup() {
-  int windowSize = 200;
+  int windowSize = 300;
   int edgeWidth = 10;
   size(windowSize + 2*edgeWidth, windowSize + 2*edgeWidth);
   
@@ -66,7 +66,7 @@ void setup() {
         }
       }
     }
-    
+        
     int patCount = int(numbers[partCount*(partLength)+partStart]);
     int patStart = partCount*(partLength)+partStart + 1;
     int patLength = 3;
@@ -97,6 +97,18 @@ void setup() {
       }
     }
     
+    xCenter = (xMax + xMin)/2;
+    yCenter = (yMax + yMin)/2;
+    println("Center: " + xCenter + ", " + yCenter);
+    
+    float maxMax = max(xMax-xCenter, yMax-yCenter);
+    float minMax = max(xCenter-xMin, yCenter-yMin);
+    float windowMax = max(maxMax, minMax);
+    xMax = xCenter + windowMax;
+    yMax = yCenter + windowMax;
+    xMin = xCenter - windowMax;
+    yMin = yCenter - windowMax;
+
     float xScale = float(windowSize)/(xMax - xMin);
     float yScale = float(windowSize)/(yMax - yMin);
     println("Max: " + xMax + "," + yMax + ", Scale:" + xScale);
