@@ -283,16 +283,20 @@ if __name__=="__main__":
 
 	# Single:
 	# allDataTypes = ['psoTestSet.json']
-	allDataTypes = ['data/iris/iris.json']
+	# allDataTypes = ['data/iris/iris.json']
 	# allDataTypes = ['data/seeds/seeds.json']
 	# allDataTypes = ['data/glass/glass.json']
-	# allDataTypes = ['data/wine/wine.json']
+	allDataTypes = ['data/wine/wine.json']
 	# allDataTypes = ['data/zoo/zoo.json']
 	# allDataTypes = ['data/heart/heart.json']
 	# allDataTypes = ['data/car/car.json']
 	# allDataTypes = ['data/yeast/yeast.json']
 	# allDataTypes = ['data/block/pageblocks.json']
 	# allDataTypes = ['data/ionosphere/ionosphere.json']
+
+	# allDataTypes = ['data/pendigits/pendigits.json']
+	# allDataTypes = ['filenames[5] = "../../data/flare/flare.json']
+	# allDataTypes = ['data/letter/letter-recognition.json']
 
 	runsPerDataSet = 1 #10
 	for dataSet in allDataTypes:
@@ -306,7 +310,7 @@ if __name__=="__main__":
 		motionDelta = 1.0
 		manualStop = False
 		iterations = 0
-		particleNumber = 5
+		particleNumber = 2
 		minMotionDelta = float(particleNumber*len(pSet.patterns[0]['p']))/10000
 
 		startTime = time.time()
@@ -316,9 +320,9 @@ if __name__=="__main__":
 			swarm.update()
 			motionDelta = sum(sum(abs(v) for v in p.v) for p in Particle.particles)
 			iterations = iterations + 1
-			if iterations%500 == 0:
+			if iterations%100 == 0:
 				print(str(iterations) + " : " + str(round(motionDelta, 4)) + "/" + str(minMotionDelta))
-			if iterations%5000 == 0:
+			if iterations%1000 == 0:
 				val = str(raw_input("Should we Stop (y/n)?  "))
 				if val is "y":
 					manualStop = True

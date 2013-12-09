@@ -32,10 +32,12 @@ void setup() {
     int partCount = int(numbers[0]);
     int partStart = 1;
     int partLength = 2;
+    println("Particles: " + partCount);
     particleBests = new Point3D[partCount];
     particlePositions = new Point3D[partCount][frames];
     for (int i = 0 ; i < partCount; i++) {
       Point3D p = new Point3D(numbers[i*partLength+partStart], numbers[i*partLength+partStart+1], 0);
+//      println(i + ": " + p.x + ", " + p.y + ", " + p.z);
       particleBests[i] = p;
       
       if (p.x > xMax)
@@ -68,10 +70,14 @@ void setup() {
     int patCount = int(numbers[partCount*(partLength)+partStart]);
     int patStart = partCount*(partLength)+partStart + 1;
     int patLength = 3;
+    println("Patterns: " + patCount);
     patternPositions = new Point3D[patCount];
     patternMembership = new int[patCount][frames];
     for (int i = 0 ; i < patCount; i++) {
+      if (i*patLength+patStart+2 >= numbers.length)
+        println((i*patLength+patStart+2)/patLength + " is too big!");
       Point3D p = new Point3D(numbers[i*patLength+patStart], numbers[i*patLength+patStart+1], numbers[i*patLength+patStart+2]);
+//      println(i + ": " + p.x + ", " + p.y + ", " + p.z);
       patternPositions[i] = p;
       
       if (p.x > xMax)
@@ -145,19 +151,18 @@ void draw() {
     Point3D p = patternPositions[i];
     Point3D p2 = particleBests[int(p.z)];
 //    stroke(120, 150, 180, 150);
-    stroke(0, 150);
+    stroke(0, 50);
     if (frames > 0) {
 //      stroke(120+50*patternMembership[i][frameCount%frames], 255-150*patternMembership[i][frameCount%frames], 50+180/(1+(2*patternMembership[i][frameCount%frames])), 150);
       p2 = particlePositions[patternMembership[i][frameCount%frames]][frameCount%frames];
     }
-    stroke(0, 50);
     ellipse(p.x, p.y, 4, 4);
     line(p.x, p.y, p2.x, p2.y);
   }
   fill(255);
-  if (frames > 0)
-    text(frameCount%frames, 10, 20);
-  text(frames, 10, height - 10);
+//  if (frames > 0)
+//    text(frameCount%frames, 10, 20);
+//  text(frames, 10, height - 10);
 }
 
 class Point3D {
