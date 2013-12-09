@@ -7897,4 +7897,4 @@ CLUSTER:11
 There is 0.04 percent of the data in this cluster
 The mean of this cluster is [20.001250, 16.822500, 0.887788, 6.364000, 3.867250, 5.423875, 6.209000]
 The variance of this cluster is [0.895727, 0.133707, 0.000143, 0.035956, 0.019373, 0.464660, 0.032737]
-Total Time: 108.140938
+Total Time: 101.984965

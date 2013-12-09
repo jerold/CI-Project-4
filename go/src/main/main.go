@@ -48,7 +48,7 @@ func main() {
 				patterns[i] = item.P
 			}
 			clusters, centers := kmeans(numClusters, patterns)
-			printDataToCSVFile(f1, clusters, centers, len(data))
+			printDataToCSVFile(f1, clusters, centers, int64(len(data)))
 			printDataToFile(f2, clusters, float64(len(data)), centers)
 
 			//competitive learning call on same data
@@ -74,7 +74,7 @@ func main() {
 				centers[i] = vectorOperations.FindMean(cluster)
 			}
 			f1.WriteString(strconv.FormatInt(int64(numClusters), 8) + ",")
-			printDataToCSVFile(f1, lClusters, centers, len(data))
+			printDataToCSVFile(f1, lClusters, centers, int64(len(data)))
 			printDataToFile(f2, lClusters, float64(len(data)), centers)
 		}
 	}
@@ -94,6 +94,7 @@ func main() {
 func printDataToFile(f *os.File, c [][][]float64, total float64, centers [][]float64) {
 	//kMeansDist := make([]float64, 0)
 	for k := 0; k < len(c); k++ {
+		fmt.Println(total)
 		f.WriteString("CLUSTER:" + strconv.FormatInt(int64(k), 8) + "\n")
 		f.WriteString("There is " + strconv.FormatFloat(float64(len(c[k]))/total, 'f', 2, 64) + " percent of the data in this cluster" + "\n")
 		f.WriteString("The mean of this cluster is " + vectorOperations.ToString(vectorOperations.FindMean(c[k])) + "\n")
@@ -105,12 +106,13 @@ func printDataToFile(f *os.File, c [][][]float64, total float64, centers [][]flo
 	}
 }
 
-func printDataToCSVFile(f1 *os.File, clusters [][][]float64, centers [][]float64, total int) {
+func printDataToCSVFile(f1 *os.File, clusters [][][]float64, centers [][]float64, total int64) {
 	for i := 0; i < len(centers); i++ {
 		f1.WriteString(strconv.FormatFloat(centers[i][0], 'f', 6, 64) + ",")
 		f1.WriteString(strconv.FormatFloat(centers[i][1], 'f', 6, 64) + ",")
 	}
-	f1.WriteString(strconv.FormatInt(int64(total), 8) + ",")
+	fmt.Println(total)
+	f1.WriteString(strconv.FormatInt(total, 10) + ",")
 	for i, cluster := range clusters {
 		for _, vector := range cluster {
 			f1.WriteString(strconv.FormatFloat(vector[0], 'f', 6, 64) + ",")
