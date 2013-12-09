@@ -6,15 +6,17 @@ import (
 	"log"
 )
 
+//pattern class
 type Pattern struct {
-	//T float64
 	P []float64
 }
 
+//the set of data vectors lives here
 type PatternSet struct {
 	Patterns []Pattern
 }
 
+//read in the data from a json file
 func readJson(filename string) (jsonData []Pattern) {
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
