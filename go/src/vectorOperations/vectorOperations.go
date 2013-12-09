@@ -103,6 +103,7 @@ func GetNumClasses(t []float64) int {
 	return count
 }
 
+//return a string version of a vector for file writing...ugh go types can get rediculous!
 func ToString(vector []float64) string {
 	var s string
 	s += "["
@@ -116,52 +117,3 @@ func ToString(vector []float64) string {
 	}
 	return s
 }
-
-//function to make cluster according to input data
-//func MakeClusters(p [][]float64, t []float64) (clusters [][][]float64) {
-//	clusters = make([][][]float64, GetNumClasses(t))
-//	for i := range clusters {
-//		clusters[i] = make([][]float64, 5)
-//	}
-//	for i, item := range p {
-//		clusters[int(t[i])] = append(clusters[int(t[i])], item)
-//	}
-//	return clusters
-//}
-
-//func MoveClusters(c [][][]float64) [][][]float64 {
-//	counts := make([][]int, len(c))
-//	for i := range counts {
-//		counts[i] = make([]int, len(c))
-//	}
-//	//for iter := 0; iter < len(c); iter++ {
-//	for i := range c {
-//		for _, elem := range c[i] {
-//			counts[i][int(elem[len(elem)-1])]++
-//		}
-//	}
-//	//fmt.Println(counts)
-//	maxs := make([]int, len(c))
-//	//class := 0
-//	for i := range counts {
-//		max := 0
-//		class := -1
-//		for j, count := range counts[i] {
-//			if count > max {
-//				max = count
-//				class = j
-//			}
-//		}
-//		if maxs[class] == 0 {
-//			maxs[class] = max
-//		} else if maxs[class] <= max {
-//			for k, item := range maxs {
-//				if item == 0 {
-//					maxs[k] = maxs[class]
-//					maxs[class] = max
-//				}
-//			}
-//		}
-//	}
-//	return c
-//}
