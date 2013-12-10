@@ -3362,3 +3362,530 @@ CLUSTER:38
 Cluster contains 0.00404312668464 percent of the data
 Cluster mean is [0.49333333333333335, 0.5566666666666666, 0.4433333333333334, 0.3133333333333333, 0.5, 0.0, 0.5083333333333334, 0.27999999999999997]
 Cluster standard deviation is [0.07909207011803114, 0.09843215373488932, 0.12009255689767882, 0.07824463062870336, 0.0, 0.0, 0.01343709624716426, 0.08660254037844387]
+
+
+NUMBER OF CLUSTERS: 29
+CURRENT DATA SET: car
+================PARTICLE SWARM================
+CLUSTER:0
+Cluster contains 0.695023148148 percent of the data
+Cluster mean is [2.4862614487926726, 2.4937552039966695, 2.3863447127393838, 1.996669442131557, 2.0, 2.039134054954205]
+Cluster standard deviation is [1.1153397580741622, 1.1324459994808436, 1.1170974839959864, 0.8181876550897836, 0.8283084696532148, 0.818784816481844]
+The distance between this cluster and cluster 1 is 0.49682197943
+The distance between this cluster and cluster 2 is 0.720867787937
+The distance between this cluster and cluster 3 is 1.257791213
+The distance between this cluster and cluster 4 is 0.69118296568
+The distance between this cluster and cluster 5 is 0.511894647772
+The distance between this cluster and cluster 6 is 1.17454048596
+The distance between this cluster and cluster 7 is 1.93124560545
+The distance between this cluster and cluster 8 is 1.37183121098
+The distance between this cluster and cluster 9 is 1.23140290539
+The distance between this cluster and cluster 10 is 0.746472930458
+The distance between this cluster and cluster 11 is 2.41633068428
+The distance between this cluster and cluster 12 is 2.0674794679
+The distance between this cluster and cluster 13 is 2.514345203
+The distance between this cluster and cluster 14 is 1.12408150046
+The distance between this cluster and cluster 15 is 2.13907727296
+The distance between this cluster and cluster 16 is 0.965814549938
+The distance between this cluster and cluster 17 is 1.10259613087
+The distance between this cluster and cluster 18 is 0.864896160875
+The distance between this cluster and cluster 19 is 1.38248740054
+The distance between this cluster and cluster 20 is 2.33336328485
+The distance between this cluster and cluster 21 is 1.79387664435
+The distance between this cluster and cluster 22 is 1.78470467231
+The distance between this cluster and cluster 23 is 0.718396071511
+The distance between this cluster and cluster 24 is 1.97162217425
+The distance between this cluster and cluster 25 is 2.28075065641
+The distance between this cluster and cluster 26 is 2.13357835865
+The distance between this cluster and cluster 27 is 1.32291974276
+The distance between this cluster and cluster 28 is 2.22381892267
+CLUSTER:1
+Cluster contains 0.134259259259 percent of the data
+Cluster mean is [2.564655172413793, 2.6163793103448274, 2.8448275862068964, 1.9353448275862069, 2.0301724137931036, 1.9353448275862069]
+Cluster standard deviation is [1.1541345698105865, 1.0481053485413132, 1.079618772720914, 0.8253269269000924, 0.8168188744891727, 0.7933727990896307]
+The distance between this cluster and cluster 2 is 0.86594859769
+The distance between this cluster and cluster 3 is 1.57318548521
+The distance between this cluster and cluster 4 is 0.72402933016
+The distance between this cluster and cluster 5 is 0.473289338047
+The distance between this cluster and cluster 6 is 0.919700319053
+The distance between this cluster and cluster 7 is 1.56849419955
+The distance between this cluster and cluster 8 is 1.33041477295
+The distance between this cluster and cluster 9 is 1.65941558306
+The distance between this cluster and cluster 10 is 0.99607521022
+The distance between this cluster and cluster 11 is 2.01843067162
+The distance between this cluster and cluster 12 is 1.84240730431
+The distance between this cluster and cluster 13 is 2.30894917315
+The distance between this cluster and cluster 14 is 1.50896086066
+The distance between this cluster and cluster 15 is 1.86965932796
+The distance between this cluster and cluster 16 is 1.13382389683
+The distance between this cluster and cluster 17 is 1.09041501497
+The distance between this cluster and cluster 18 is 0.871923318834
+The distance between this cluster and cluster 19 is 1.2523239396
+The distance between this cluster and cluster 20 is 2.16894688164
+The distance between this cluster and cluster 21 is 2.0000960515
+The distance between this cluster and cluster 22 is 1.99768091616
+The distance between this cluster and cluster 23 is 0.708170110125
+The distance between this cluster and cluster 24 is 2.12826740478
+The distance between this cluster and cluster 25 is 1.91168045087
+The distance between this cluster and cluster 26 is 2.22626285155
+The distance between this cluster and cluster 27 is 1.41854882431
+The distance between this cluster and cluster 28 is 2.04775859166
+CLUSTER:2
+Cluster contains 0.00578703703704 percent of the data
+Cluster mean is [2.8, 3.0, 2.2, 1.8, 1.7, 2.0]
+Cluster standard deviation is [1.077032961426901, 1.0954451150103321, 0.9797958971132713, 0.8717797887081348, 0.45825756949558405, 0.8944271909999159]
+The distance between this cluster and cluster 3 is 1.73719637338
+The distance between this cluster and cluster 4 is 0.829571757241
+The distance between this cluster and cluster 5 is 0.590666042637
+The distance between this cluster and cluster 6 is 1.16706504374
+The distance between this cluster and cluster 7 is 1.78469827394
+The distance between this cluster and cluster 8 is 1.97236110622
+The distance between this cluster and cluster 9 is 1.26885775404
+The distance between this cluster and cluster 10 is 1.03762549442
+The distance between this cluster and cluster 11 is 2.42418371141
+The distance between this cluster and cluster 12 is 2.31516738056
+The distance between this cluster and cluster 13 is 2.85657137142
+The distance between this cluster and cluster 14 is 1.27653094361
+The distance between this cluster and cluster 15 is 2.50454025591
+The distance between this cluster and cluster 16 is 0.964365076099
+The distance between this cluster and cluster 17 is 0.947364766075
+The distance between this cluster and cluster 18 is 1.1007510584
+The distance between this cluster and cluster 19 is 1.75552698641
+The distance between this cluster and cluster 20 is 2.94373156989
+The distance between this cluster and cluster 21 is 2.44335834457
+The distance between this cluster and cluster 22 is 2.1
+The distance between this cluster and cluster 23 is 1.20312094155
+The distance between this cluster and cluster 24 is 2.03960780544
+The distance between this cluster and cluster 25 is 2.43104915623
+The distance between this cluster and cluster 26 is 2.61916017074
+The distance between this cluster and cluster 27 is 1.55241746963
+The distance between this cluster and cluster 28 is 2.30434372436
+CLUSTER:3
+Cluster contains 0.0127314814815 percent of the data
+Cluster mean is [2.727272727272727, 1.3636363636363635, 1.9545454545454546, 2.227272727272727, 2.0, 1.9545454545454546]
+Cluster standard deviation is [1.1354541815269814, 0.5677270907634906, 1.0214638661020108, 0.7343406555183415, 0.7977240352174656, 0.8244707794189571]
+The distance between this cluster and cluster 4 is 1.87141715185
+The distance between this cluster and cluster 5 is 1.71581749706
+The distance between this cluster and cluster 6 is 2.06960592369
+The distance between this cluster and cluster 7 is 2.90691108151
+The distance between this cluster and cluster 8 is 1.13759403087
+The distance between this cluster and cluster 9 is 1.30162009666
+The distance between this cluster and cluster 10 is 1.05398365391
+The distance between this cluster and cluster 11 is 3.48876591409
+The distance between this cluster and cluster 12 is 2.24559562801
+The distance between this cluster and cluster 13 is 2.39576071875
+The distance between this cluster and cluster 14 is 1.67640598756
+The distance between this cluster and cluster 15 is 2.17951678426
+The distance between this cluster and cluster 16 is 1.25358988641
+The distance between this cluster and cluster 17 is 2.21459751394
+The distance between this cluster and cluster 18 is 2.01389799244
+The distance between this cluster and cluster 19 is 2.00061328407
+The distance between this cluster and cluster 20 is 2.59657364117
+The distance between this cluster and cluster 21 is 1.11217900931
+The distance between this cluster and cluster 22 is 0.8467243641
+The distance between this cluster and cluster 23 is 1.22284555021
+The distance between this cluster and cluster 24 is 1.5706502312
+The distance between this cluster and cluster 25 is 2.57410820632
+The distance between this cluster and cluster 26 is 2.27908202486
+The distance between this cluster and cluster 27 is 1.29286024121
+The distance between this cluster and cluster 28 is 2.45664893034
+CLUSTER:4
+Cluster contains 0.015625 percent of the data
+Cluster mean is [2.2222222222222223, 3.074074074074074, 2.5185185185185186, 2.2222222222222223, 1.962962962962963, 2.0]
+Cluster standard deviation is [1.0657403385139375, 1.0514866345613623, 0.9177416069158421, 0.8748897637790899, 0.74443523119414, 0.7200822998230956]
+The distance between this cluster and cluster 5 is 0.463539871592
+The distance between this cluster and cluster 6 is 1.28135487995
+The distance between this cluster and cluster 7 is 1.80654190089
+The distance between this cluster and cluster 8 is 1.90962541842
+The distance between this cluster and cluster 9 is 1.53792923681
+The distance between this cluster and cluster 10 is 1.18807518017
+The distance between this cluster and cluster 11 is 2.01333006295
+The distance between this cluster and cluster 12 is 2.35199766244
+The distance between this cluster and cluster 13 is 2.98366609635
+The distance between this cluster and cluster 14 is 1.16787167708
+The distance between this cluster and cluster 15 is 2.38887487318
+The distance between this cluster and cluster 16 is 1.30966649856
+The distance between this cluster and cluster 17 is 0.761908206562
+The distance between this cluster and cluster 18 is 0.461709352631
+The distance between this cluster and cluster 19 is 1.34200977133
+The distance between this cluster and cluster 20 is 2.34608508506
+The distance between this cluster and cluster 21 is 2.24722966166
+The distance between this cluster and cluster 22 is 2.38522544249
+The distance between this cluster and cluster 23 is 1.04391732167
+The distance between this cluster and cluster 24 is 2.5845775578
+The distance between this cluster and cluster 25 is 2.55031669138
+The distance between this cluster and cluster 26 is 2.06255066031
+The distance between this cluster and cluster 27 is 1.76500037888
+The distance between this cluster and cluster 28 is 2.60775986675
+CLUSTER:5
+Cluster contains 0.0271990740741 percent of the data
+Cluster mean is [2.404255319148936, 2.872340425531915, 2.595744680851064, 1.9148936170212767, 1.7659574468085106, 1.9574468085106382]
+Cluster standard deviation is [0.9819558092948363, 0.981033351778596, 0.9146461812853052, 0.7388832065610782, 0.7208967806849962, 0.7978014152873479]
+The distance between this cluster and cluster 6 is 1.16132594483
+The distance between this cluster and cluster 7 is 1.74535856739
+The distance between this cluster and cluster 8 is 1.70625123848
+The distance between this cluster and cluster 9 is 1.43569732167
+The distance between this cluster and cluster 10 is 0.957919505063
+The distance between this cluster and cluster 11 is 2.11107007709
+The distance between this cluster and cluster 12 is 2.21556866965
+The distance between this cluster and cluster 13 is 2.68319299936
+The distance between this cluster and cluster 14 is 1.20489364168
+The distance between this cluster and cluster 15 is 2.1986391608
+The distance between this cluster and cluster 16 is 1.14043347092
+The distance between this cluster and cluster 17 is 0.675406254019
+The distance between this cluster and cluster 18 is 0.746181511894
+The distance between this cluster and cluster 19 is 1.23086014359
+The distance between this cluster and cluster 20 is 2.404511587
+The distance between this cluster and cluster 21 is 2.21007200987
+The distance between this cluster and cluster 22 is 2.12196045231
+The distance between this cluster and cluster 23 is 0.964146183567
+The distance between this cluster and cluster 24 is 2.30345558901
+The distance between this cluster and cluster 25 is 2.25326080298
+The distance between this cluster and cluster 26 is 2.21156370776
+The distance between this cluster and cluster 27 is 1.63165272936
+The distance between this cluster and cluster 28 is 2.3321420141
+CLUSTER:6
+Cluster contains 0.00810185185185 percent of the data
+Cluster mean is [3.142857142857143, 3.0, 2.857142857142857, 1.7142857142857142, 2.5714285714285716, 1.7857142857142858]
+Cluster standard deviation is [1.0594569267279519, 0.9258200997725514, 0.9147320339189784, 0.8806305718527108, 0.6226998490772391, 0.9394961741404219]
+The distance between this cluster and cluster 7 is 0.899170410233
+The distance between this cluster and cluster 8 is 1.78622016644
+The distance between this cluster and cluster 9 is 2.25085017951
+The distance between this cluster and cluster 10 is 1.60197582086
+The distance between this cluster and cluster 11 is 1.80466138682
+The distance between this cluster and cluster 12 is 1.82107839771
+The distance between this cluster and cluster 13 is 2.51323029797
+The distance between this cluster and cluster 14 is 2.11418692457
+The distance between this cluster and cluster 15 is 2.28069636222
+The distance between this cluster and cluster 16 is 1.48633228905
+The distance between this cluster and cluster 17 is 1.62686313913
+The distance between this cluster and cluster 18 is 1.36674043738
+The distance between this cluster and cluster 19 is 2.09309786524
+The distance between this cluster and cluster 20 is 2.79505961952
+The distance between this cluster and cluster 21 is 2.49869353618
+The distance between this cluster and cluster 22 is 2.46299137851
+The distance between this cluster and cluster 23 is 1.31076780739
+The distance between this cluster and cluster 24 is 2.14523677395
+The distance between this cluster and cluster 25 is 1.85026197814
+The distance between this cluster and cluster 26 is 2.88380417688
+The distance between this cluster and cluster 27 is 1.64595980311
+The distance between this cluster and cluster 28 is 1.9987240828
+CLUSTER:7
+Cluster contains 0.00752314814815 percent of the data
+Cluster mean is [3.3846153846153846, 3.6153846153846154, 3.4615384615384617, 1.6923076923076923, 2.6153846153846154, 1.8461538461538463]
+Cluster standard deviation is [0.6249260311258431, 0.6249260311258431, 0.8426500884694864, 0.8213137116947162, 0.7378202343558031, 0.8634593969478327]
+The distance between this cluster and cluster 8 is 2.4797068387
+The distance between this cluster and cluster 9 is 2.97200946107
+The distance between this cluster and cluster 10 is 2.38171867071
+The distance between this cluster and cluster 11 is 1.37962062075
+The distance between this cluster and cluster 12 is 2.00307948324
+The distance between this cluster and cluster 13 is 2.82607260886
+The distance between this cluster and cluster 14 is 2.82527506254
+The distance between this cluster and cluster 15 is 2.56973739823
+The distance between this cluster and cluster 16 is 2.1532966332
+The distance between this cluster and cluster 17 is 2.05715305659
+The distance between this cluster and cluster 18 is 1.82347266769
+The distance between this cluster and cluster 19 is 2.54666143558
+The distance between this cluster and cluster 20 is 3.12720665023
+The distance between this cluster and cluster 21 is 3.30310952655
+The distance between this cluster and cluster 22 is 3.25312776212
+The distance between this cluster and cluster 23 is 1.95653585308
+The distance between this cluster and cluster 24 is 2.7987211788
+The distance between this cluster and cluster 25 is 2.01106407114
+The distance between this cluster and cluster 26 is 3.46772950632
+The distance between this cluster and cluster 27 is 2.23739070342
+The distance between this cluster and cluster 28 is 2.17639297705
+CLUSTER:8
+Cluster contains 0.0138888888889 percent of the data
+Cluster mean is [2.625, 1.3333333333333333, 3.0, 1.9583333333333333, 2.3333333333333335, 1.875]
+Cluster standard deviation is [1.2183492931011204, 0.6236095644623234, 1.0408329997330663, 0.789470638395684, 0.6871842709362769, 0.5994789404140899]
+The distance between this cluster and cluster 9 is 2.12254760449
+The distance between this cluster and cluster 10 is 1.41114118516
+The distance between this cluster and cluster 11 is 2.93299003673
+The distance between this cluster and cluster 12 is 1.74154704533
+The distance between this cluster and cluster 13 is 1.60889454803
+The distance between this cluster and cluster 14 is 2.17795536762
+The distance between this cluster and cluster 15 is 1.5036219421
+The distance between this cluster and cluster 16 is 1.68726850264
+The distance between this cluster and cluster 17 is 2.25115710987
+The distance between this cluster and cluster 18 is 1.95402785606
+The distance between this cluster and cluster 19 is 1.70477271212
+The distance between this cluster and cluster 20 is 1.90531056086
+The distance between this cluster and cluster 21 is 1.2180072523
+The distance between this cluster and cluster 22 is 1.44517876634
+The distance between this cluster and cluster 23 is 1.15695361474
+The distance between this cluster and cluster 24 is 1.90531056086
+The distance between this cluster and cluster 25 is 1.81572988079
+The distance between this cluster and cluster 26 is 2.30149407994
+The distance between this cluster and cluster 27 is 1.50173510758
+The distance between this cluster and cluster 28 is 2.0425168298
+CLUSTER:9
+Cluster contains 0.00231481481481 percent of the data
+Cluster mean is [2.5, 2.25, 1.5, 2.25, 1.25, 2.25]
+Cluster standard deviation is [0.8660254037844386, 0.82915619758885, 0.8660254037844386, 0.82915619758885, 0.4330127018922193, 0.82915619758885]
+The distance between this cluster and cluster 10 is 1.11803398875
+The distance between this cluster and cluster 11 is 3.5
+The distance between this cluster and cluster 12 is 2.79880927062
+The distance between this cluster and cluster 13 is 3.16227766017
+The distance between this cluster and cluster 14 is 1.05512143851
+The distance between this cluster and cluster 15 is 2.78547585515
+The distance between this cluster and cluster 16 is 1.16189500386
+The distance between this cluster and cluster 17 is 1.67705098312
+The distance between this cluster and cluster 18 is 1.74689807733
+The distance between this cluster and cluster 19 is 1.98037243972
+The distance between this cluster and cluster 20 is 3.0776975521
+The distance between this cluster and cluster 21 is 2.13775583264
+The distance between this cluster and cluster 22 is 1.65831239518
+The distance between this cluster and cluster 23 is 1.52069063257
+The distance between this cluster and cluster 24 is 2.06155281281
+The distance between this cluster and cluster 25 is 3.16227766017
+The distance between this cluster and cluster 26 is 2.44948974278
+The distance between this cluster and cluster 27 is 1.65831239518
+The distance between this cluster and cluster 28 is 2.82842712475
+CLUSTER:10
+Cluster contains 0.00347222222222 percent of the data
+Cluster mean is [2.5, 2.1666666666666665, 2.1666666666666665, 2.0, 1.6666666666666667, 1.5]
+Cluster standard deviation is [0.7637626158259734, 0.3726779962499649, 1.0671873729054748, 0.816496580927726, 0.4714045207910317, 0.7637626158259734]
+The distance between this cluster and cluster 11 is 2.78886675511
+The distance between this cluster and cluster 12 is 2.39791576166
+The distance between this cluster and cluster 13 is 2.66145323711
+The distance between this cluster and cluster 14 is 1.09864973945
+The distance between this cluster and cluster 15 is 2.11736504033
+The distance between this cluster and cluster 16 is 0.894427191
+The distance between this cluster and cluster 17 is 1.29903810568
+The distance between this cluster and cluster 18 is 1.51211817574
+The distance between this cluster and cluster 19 is 1.36358901433
+The distance between this cluster and cluster 20 is 2.56038191596
+The distance between this cluster and cluster 21 is 1.62890556305
+The distance between this cluster and cluster 22 is 1.29099444874
+The distance between this cluster and cluster 23 is 1.01036297108
+The distance between this cluster and cluster 24 is 2.02072594216
+The distance between this cluster and cluster 25 is 2.2360679775
+The distance between this cluster and cluster 26 is 1.9364916731
+The distance between this cluster and cluster 27 is 1.58113883008
+The distance between this cluster and cluster 28 is 2.58198889747
+CLUSTER:11
+Cluster contains 0.00173611111111 percent of the data
+Cluster mean is [2.3333333333333335, 4.0, 4.0, 2.0, 2.6666666666666665, 1.3333333333333333]
+Cluster standard deviation is [0.9428090415820634, 0.0, 0.0, 0.0, 0.4714045207910317, 0.4714045207910317]
+The distance between this cluster and cluster 12 is 2.84312035154
+The distance between this cluster and cluster 13 is 3.52372908531
+The distance between this cluster and cluster 14 is 3.02054596334
+The distance between this cluster and cluster 15 is 2.85929054248
+The distance between this cluster and cluster 16 is 2.84018778722
+The distance between this cluster and cluster 17 is 2.12622513703
+The distance between this cluster and cluster 18 is 2.01850939192
+The distance between this cluster and cluster 19 is 2.39030158488
+The distance between this cluster and cluster 20 is 2.81858908755
+The distance between this cluster and cluster 21 is 3.54776925217
+The distance between this cluster and cluster 22 is 3.85140666943
+The distance between this cluster and cluster 23 is 2.4366985862
+The distance between this cluster and cluster 24 is 3.88372673258
+The distance between this cluster and cluster 25 is 2.48327740429
+The distance between this cluster and cluster 26 is 3.09569593683
+The distance between this cluster and cluster 27 is 3.10912635103
+The distance between this cluster and cluster 28 is 3.2403703492
+CLUSTER:12
+Cluster contains 0.00347222222222 percent of the data
+Cluster mean is [3.8333333333333335, 2.0, 3.6666666666666665, 2.5, 2.3333333333333335, 2.5]
+Cluster standard deviation is [0.3726779962499649, 0.5773502691896257, 0.4714045207910317, 0.7637626158259734, 0.4714045207910317, 0.5]
+The distance between this cluster and cluster 13 is 1.52752523165
+The distance between this cluster and cluster 14 is 3.15547639034
+The distance between this cluster and cluster 15 is 1.48579732412
+The distance between this cluster and cluster 16 is 1.9364916731
+The distance between this cluster and cluster 17 is 2.84678180876
+The distance between this cluster and cluster 18 is 2.33033061417
+The distance between this cluster and cluster 19 is 2.59105030184
+The distance between this cluster and cluster 20 is 2.58736244938
+The distance between this cluster and cluster 21 is 2.72090671162
+The distance between this cluster and cluster 22 is 2.5331140256
+The distance between this cluster and cluster 23 is 1.5612494996
+The distance between this cluster and cluster 24 is 2.04124145232
+The distance between this cluster and cluster 25 is 1.8929694486
+The distance between this cluster and cluster 26 is 3.46410161514
+The distance between this cluster and cluster 27 is 1.25830573921
+The distance between this cluster and cluster 28 is 1.19023807142
+CLUSTER:13
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [3.5, 1.0, 4.0, 1.5, 2.0, 2.5]
+Cluster standard deviation is [0.5, 0.0, 0.0, 0.5, 0.0, 0.5]
+The distance between this cluster and cluster 14 is 3.47592164037
+The distance between this cluster and cluster 15 is 1.62588164522
+The distance between this cluster and cluster 16 is 2.59807621135
+The distance between this cluster and cluster 17 is 3.23071199583
+The distance between this cluster and cluster 18 is 2.95524467251
+The distance between this cluster and cluster 19 is 2.70127284812
+The distance between this cluster and cluster 20 is 2.67186992365
+The distance between this cluster and cluster 21 is 2.73313007374
+The distance between this cluster and cluster 22 is 2.39791576166
+The distance between this cluster and cluster 23 is 2.22204860433
+The distance between this cluster and cluster 24 is 2.12132034356
+The distance between this cluster and cluster 25 is 1.80277563773
+The distance between this cluster and cluster 26 is 3.74165738677
+The distance between this cluster and cluster 27 is 2.06155281281
+The distance between this cluster and cluster 28 is 1.32287565553
+CLUSTER:14
+Cluster contains 0.00925925925926 percent of the data
+Cluster mean is [1.75, 2.625, 1.625, 2.0, 1.6875, 1.875]
+Cluster standard deviation is [0.9682458365518543, 1.0532687216470449, 0.9270248108869579, 0.8660254037844386, 0.7680128579652817, 0.7806247497997998]
+The distance between this cluster and cluster 15 is 3.00553068225
+The distance between this cluster and cluster 16 is 1.63004026024
+The distance between this cluster and cluster 17 is 1.15413658204
+The distance between this cluster and cluster 18 is 1.36832763116
+The distance between this cluster and cluster 19 is 1.65477528686
+The distance between this cluster and cluster 20 is 2.81589301505
+The distance between this cluster and cluster 21 is 2.02534719246
+The distance between this cluster and cluster 22 is 2.12591891896
+The distance between this cluster and cluster 23 is 1.66419086946
+The distance between this cluster and cluster 24 is 2.68459144936
+The distance between this cluster and cluster 25 is 3.19484447978
+The distance between this cluster and cluster 26 is 1.89262549122
+The distance between this cluster and cluster 27 is 2.22643914132
+The distance between this cluster and cluster 28 is 3.25300341992
+CLUSTER:15
+Cluster contains 0.00752314814815 percent of the data
+Cluster mean is [3.076923076923077, 1.5384615384615385, 4.0, 2.6153846153846154, 1.6153846153846154, 1.6153846153846154]
+Cluster standard deviation is [0.9166442529086911, 0.634323942402717, 0.0, 0.6249260311258431, 0.737820234355803, 0.737820234355803]
+The distance between this cluster and cluster 16 is 2.01943222438
+The distance between this cluster and cluster 17 is 2.6682302492
+The distance between this cluster and cluster 18 is 2.51207655779
+The distance between this cluster and cluster 19 is 1.85222858731
+The distance between this cluster and cluster 20 is 1.98075885816
+The distance between this cluster and cluster 21 is 2.38868139704
+The distance between this cluster and cluster 22 is 2.16822125992
+The distance between this cluster and cluster 23 is 1.57633666395
+The distance between this cluster and cluster 24 is 2.65105762081
+The distance between this cluster and cluster 25 is 1.4706195611
+The distance between this cluster and cluster 26 is 2.72968559214
+The distance between this cluster and cluster 27 is 1.89362055771
+The distance between this cluster and cluster 28 is 2.15040934592
+CLUSTER:16
+Cluster contains 0.00289351851852 percent of the data
+Cluster mean is [3.2, 2.4, 2.2, 2.4, 1.6, 1.8]
+Cluster standard deviation is [0.7483314773547882, 0.8, 0.7483314773547882, 0.8, 0.4898979485566356, 0.9797958971132713]
+The distance between this cluster and cluster 17 is 1.63935963108
+The distance between this cluster and cluster 18 is 1.61296400845
+The distance between this cluster and cluster 19 is 1.84306131206
+The distance between this cluster and cluster 20 is 2.84995126664
+The distance between this cluster and cluster 21 is 2.10713075057
+The distance between this cluster and cluster 22 is 1.51657508881
+The distance between this cluster and cluster 23 is 0.858778201866
+The distance between this cluster and cluster 24 is 1.71755640373
+The distance between this cluster and cluster 25 is 2.25831795813
+The distance between this cluster and cluster 26 is 2.5
+The distance between this cluster and cluster 27 is 1.0
+The distance between this cluster and cluster 28 is 2.21359436212
+CLUSTER:17
+Cluster contains 0.00231481481481 percent of the data
+Cluster mean is [2.0, 3.25, 2.5, 1.75, 1.5, 1.75]
+Cluster standard deviation is [0.7071067811865476, 0.82915619758885, 1.5, 0.82915619758885, 0.5, 0.4330127018922193]
+The distance between this cluster and cluster 18 is 1.03926030592
+The distance between this cluster and cluster 19 is 1.2930100541
+The distance between this cluster and cluster 20 is 2.69129254366
+The distance between this cluster and cluster 21 is 2.60911862513
+The distance between this cluster and cluster 22 is 2.53722289127
+The distance between this cluster and cluster 23 is 1.58113883008
+The distance between this cluster and cluster 24 is 2.86138078556
+The distance between this cluster and cluster 25 is 2.63391343821
+The distance between this cluster and cluster 26 is 2.22204860433
+The distance between this cluster and cluster 27 is 2.27760839479
+The distance between this cluster and cluster 28 is 2.90473750966
+CLUSTER:18
+Cluster contains 0.00636574074074 percent of the data
+Cluster mean is [2.090909090909091, 3.090909090909091, 2.6363636363636362, 2.1818181818181817, 2.1818181818181817, 2.3636363636363638]
+Cluster standard deviation is [0.9958591954639383, 0.9958591954639383, 0.642824346533225, 0.7158188976374373, 0.7158188976374373, 0.8813963377120598]
+The distance between this cluster and cluster 19 is 1.50631418968
+The distance between this cluster and cluster 20 is 2.22443645426
+The distance between this cluster and cluster 21 is 2.31866305165
+The distance between this cluster and cluster 22 is 2.61669781175
+The distance between this cluster and cluster 23 is 1.1920449129
+The distance between this cluster and cluster 24 is 2.66403968402
+The distance between this cluster and cluster 25 is 2.71892662341
+The distance between this cluster and cluster 26 is 2.22727272727
+The distance between this cluster and cluster 27 is 1.82951016341
+The distance between this cluster and cluster 28 is 2.54626610439
+CLUSTER:19
+Cluster contains 0.00925925925926 percent of the data
+Cluster mean is [1.6875, 2.3125, 3.1875, 2.1875, 1.375, 1.625]
+Cluster standard deviation is [0.9164298936634487, 1.0439558180306292, 0.8076779989575054, 0.6343057228182637, 0.6959705453537527, 0.8569568250501305]
+The distance between this cluster and cluster 20 is 1.68273504219
+The distance between this cluster and cluster 21 is 2.08371663141
+The distance between this cluster and cluster 22 is 2.21852991866
+The distance between this cluster and cluster 23 is 1.39754248594
+The distance between this cluster and cluster 24 is 3.00780235388
+The distance between this cluster and cluster 25 is 2.30149407994
+The distance between this cluster and cluster 26 is 1.57619002661
+The distance between this cluster and cluster 27 is 2.260392665
+The distance between this cluster and cluster 28 is 2.88042965545
+CLUSTER:20
+Cluster contains 0.00347222222222 percent of the data
+Cluster mean is [1.3333333333333333, 1.6666666666666667, 4.0, 2.8333333333333335, 2.3333333333333335, 2.1666666666666665]
+Cluster standard deviation is [0.4714045207910317, 0.7453559924999299, 0.0, 0.3726779962499649, 0.7453559924999298, 0.6871842709362768]
+The distance between this cluster and cluster 21 is 2.16999743983
+The distance between this cluster and cluster 22 is 3.00924501421
+The distance between this cluster and cluster 23 is 2.03953970842
+The distance between this cluster and cluster 24 is 3.62476052849
+The distance between this cluster and cluster 25 is 2.83823106099
+The distance between this cluster and cluster 26 is 1.99304345718
+The distance between this cluster and cluster 27 is 2.71825107172
+The distance between this cluster and cluster 28 is 3.17104959841
+CLUSTER:21
+Cluster contains 0.00289351851852 percent of the data
+Cluster mean is [2.0, 1.0, 2.2, 2.4, 2.6, 1.6]
+Cluster standard deviation is [0.8944271909999159, 0.0, 0.39999999999999997, 0.4898979485566356, 0.8, 0.8]
+The distance between this cluster and cluster 22 is 1.55563491861
+The distance between this cluster and cluster 23 is 1.71973835219
+The distance between this cluster and cluster 24 is 2.50399680511
+The distance between this cluster and cluster 25 is 2.8319604517
+The distance between this cluster and cluster 26 is 1.78044938148
+The distance between this cluster and cluster 27 is 2.12602916255
+The distance between this cluster and cluster 28 is 3.1336879232
+CLUSTER:22
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [3.0, 1.0, 2.0, 2.0, 1.5, 1.5]
+Cluster standard deviation is [0.0, 0.0, 0.0, 0.0, 0.5, 0.5]
+The distance between this cluster and cluster 23 is 1.7139136501
+The distance between this cluster and cluster 24 is 1.65831239518
+The distance between this cluster and cluster 25 is 2.44948974278
+The distance between this cluster and cluster 26 is 2.59807621135
+The distance between this cluster and cluster 27 is 1.73205080757
+The distance between this cluster and cluster 28 is 2.64575131106
+CLUSTER:23
+Cluster contains 0.00231481481481 percent of the data
+Cluster mean is [2.75, 2.25, 2.75, 2.5, 2.0, 2.0]
+Cluster standard deviation is [0.82915619758885, 0.82915619758885, 0.82915619758885, 0.5, 0.7071067811865476, 0.7071067811865476]
+The distance between this cluster and cluster 24 is 1.9843134833
+The distance between this cluster and cluster 25 is 2.04633819297
+The distance between this cluster and cluster 26 is 2.10653744329
+The distance between this cluster and cluster 27 is 0.968245836552
+The distance between this cluster and cluster 28 is 2.04633819297
+CLUSTER:24
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [4.0, 1.5, 2.0, 1.5, 2.0, 2.5]
+Cluster standard deviation is [0.0, 0.5, 0.0, 0.5, 0.0, 0.5]
+The distance between this cluster and cluster 25 is 2.59807621135
+The distance between this cluster and cluster 26 is 3.74165738677
+The distance between this cluster and cluster 27 is 1.32287565553
+The distance between this cluster and cluster 28 is 1.65831239518
+CLUSTER:25
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [3.5, 2.0, 4.0, 1.5, 2.0, 1.0]
+Cluster standard deviation is [0.5, 0.0, 0.0, 0.5, 1.0, 0.0]
+The distance between this cluster and cluster 26 is 3.27871926215
+The distance between this cluster and cluster 27 is 2.34520787991
+The distance between this cluster and cluster 28 is 2.12132034356
+CLUSTER:26
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [1.0, 2.0, 2.5, 3.0, 2.0, 1.0]
+Cluster standard deviation is [0.0, 0.0, 0.5, 0.0, 0.0, 0.0]
+The distance between this cluster and cluster 27 is 2.95803989155
+The distance between this cluster and cluster 28 is 4.03112887415
+CLUSTER:27
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [3.5, 2.0, 2.5, 2.5, 2.0, 2.5]
+Cluster standard deviation is [0.5, 0.0, 0.5, 0.5, 0.0, 0.5]
+The distance between this cluster and cluster 28 is 1.58113883008
+CLUSTER:28
+Cluster contains 0.00115740740741 percent of the data
+Cluster mean is [4.0, 2.0, 3.5, 1.5, 2.0, 3.0]
+Cluster standard deviation is [0.0, 0.0, 0.5, 0.5, 0.0, 0.0]
